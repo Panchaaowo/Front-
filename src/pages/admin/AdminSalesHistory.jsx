@@ -158,7 +158,11 @@ const AdminSalesHistory = () => {
     const [sales, setSales] = useState([]);
     const [users, setUsers] = useState([]);
     const [selectedUserId, setSelectedUserId] = useState('');
-    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]); 
+    // Corregido: Usar fecha local en lugar de UTC para evitar que salte al día siguiente por diferencia horaria
+    const [selectedDate, setSelectedDate] = useState(() => {
+        const now = new Date();
+        return new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+    }); 
     const [loading, setLoading] = useState(true);
 
     const [selectedSale, setSelectedSale] = useState(null);
