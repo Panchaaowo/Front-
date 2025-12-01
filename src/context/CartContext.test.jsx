@@ -2,7 +2,6 @@ import { render, screen, act } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { CartProvider, useCart } from './CartContext';
 
-// Test component to consume context
 const TestComponent = () => {
     const { cart, addToCart, removeFromCart, clearCart, total } = useCart();
 
@@ -115,7 +114,6 @@ describe('CartContext', () => {
     });
 
     it('throws error when useCart is used outside provider', () => {
-        // Suppress console.error for this test as React logs the error
         const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
         
         expect(() => render(<TestComponent />)).toThrow('useCart debe usarse dentro de CartProvider');

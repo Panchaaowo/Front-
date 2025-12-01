@@ -4,7 +4,6 @@ import AdminLayout from './AdminLayout';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-// Mocks
 vi.mock('../context/AuthContext', () => ({
     useAuth: vi.fn(),
 }));
@@ -14,7 +13,7 @@ vi.mock('react-router-dom', () => ({
     useLocation: vi.fn(),
 }));
 
-// Mock Icons to avoid issues
+
 vi.mock('@mui/icons-material/Dashboard', () => ({ default: () => <span data-testid="DashboardIcon">Dashboard</span> }));
 vi.mock('@mui/icons-material/Inventory', () => ({ default: () => <span data-testid="InventoryIcon">Inventory</span> }));
 vi.mock('@mui/icons-material/Storefront', () => ({ default: () => <span data-testid="StorefrontIcon">Storefront</span> }));

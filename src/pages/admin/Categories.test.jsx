@@ -4,7 +4,7 @@ import Categories from './Categories';
 import { categoriesService } from '../../api/services';
 import Swal from 'sweetalert2';
 
-// Mock services
+
 vi.mock('../../api/services', () => ({
     categoriesService: {
         getAll: vi.fn(),
@@ -14,19 +14,18 @@ vi.mock('../../api/services', () => ({
     },
 }));
 
-// Mock SweetAlert2
+
 vi.mock('sweetalert2', () => ({
     default: {
         fire: vi.fn(() => Promise.resolve({ isConfirmed: true })),
     },
 }));
 
-// Mock AdminLayout
+
 vi.mock('../../components/AdminLayout', () => ({
     default: ({ children }) => <div data-testid="admin-layout">{children}</div>,
 }));
 
-// Mock Icons
 vi.mock('@mui/icons-material/Add', () => ({ default: () => <span data-testid="AddIcon">Add</span> }));
 vi.mock('@mui/icons-material/Edit', () => ({ default: () => <span data-testid="EditIcon">Edit</span> }));
 vi.mock('@mui/icons-material/Delete', () => ({ default: () => <span data-testid="DeleteIcon">Delete</span> }));
@@ -101,10 +100,7 @@ describe('Categories Component', () => {
         render(<Categories />);
         await waitFor(() => expect(screen.getByText('Tortas Cuadradas')).toBeInTheDocument());
 
-        // Find the edit button for the first category (Tortas Cuadradas)
-        // Since we mocked the icon as <span data-testid="EditIcon">, we can find it.
-        // However, the click event is on the IconButton parent. 
-        // Clicking the icon usually bubbles up.
+       
         const editIcons = screen.getAllByTestId('EditIcon');
         fireEvent.click(editIcons[0]); 
 
@@ -147,7 +143,6 @@ describe('Categories Component', () => {
             }));
         });
 
-        // Swal mock returns isConfirmed: true automatically
         await waitFor(() => {
             expect(categoriesService.delete).toHaveBeenCalledWith(1);
             expect(Swal.fire).toHaveBeenCalledWith(expect.objectContaining({

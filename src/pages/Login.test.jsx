@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-// Mock dependencies
+
 vi.mock('../context/AuthContext', () => ({
     useAuth: vi.fn(),
 }));
@@ -62,7 +62,7 @@ describe('Login Component', () => {
             }));
         });
 
-        // Wait for navigation (setTimeout in component)
+        
         await waitFor(() => {
             expect(mockNavigate).toHaveBeenCalledWith('/home');
         }, { timeout: 2000 });

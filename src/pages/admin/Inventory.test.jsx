@@ -14,24 +14,24 @@ vi.mock('../../api/services', () => ({
     deleteProducto: vi.fn(),
 }));
 
-// Mock AuthContext
+
 vi.mock('../../context/AuthContext', () => ({
     useAuth: vi.fn(),
 }));
 
-// Mock SweetAlert2
+
 vi.mock('sweetalert2', () => ({
     default: {
         fire: vi.fn(() => Promise.resolve({ isConfirmed: true })),
     },
 }));
 
-// Mock AdminLayout
+
 vi.mock('../../components/AdminLayout', () => ({
     default: ({ children }) => <div data-testid="admin-layout">{children}</div>,
 }));
 
-// Mock Icons
+
 vi.mock('@mui/icons-material/Replay', () => ({ default: () => <span data-testid="ReplayIcon">Replay</span> }));
 vi.mock('@mui/icons-material/Edit', () => ({ default: () => <span data-testid="EditIcon">Edit</span> }));
 vi.mock('@mui/icons-material/Delete', () => ({ default: () => <span data-testid="DeleteIcon">Delete</span> }));
@@ -87,9 +87,7 @@ describe('Inventory Component', () => {
         fireEvent.change(screen.getByLabelText(/Precio/i), { target: { value: '5000' } });
         fireEvent.change(screen.getByLabelText(/Stock/i), { target: { value: '20' } });
         
-        // Select category
-        // Using getByRole 'combobox' might find multiple if there are others, but here it should be unique in the dialog
-        // However, MUI Select is tricky. Let's try finding by label text or just the combobox.
+        
         const categorySelect = screen.getByRole('combobox');
         fireEvent.mouseDown(categorySelect);
         

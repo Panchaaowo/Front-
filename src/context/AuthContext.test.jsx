@@ -3,14 +3,14 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { AuthProvider, useAuth } from './AuthContext';
 import { authService } from '../api/services';
 
-// Mock authService
+
 vi.mock('../api/services', () => ({
     authService: {
         login: vi.fn()
     }
 }));
 
-// Test component to consume context
+
 const TestComponent = () => {
     const { user, isAuthenticated, login, logout, loading } = useAuth();
     
@@ -27,7 +27,7 @@ const TestComponent = () => {
 };
 
 describe('AuthContext', () => {
-    // Mock localStorage
+    
     let store = {};
     const localStorageMock = {
         getItem: vi.fn((key) => store[key] || null),
@@ -36,26 +36,26 @@ describe('AuthContext', () => {
         clear: vi.fn(() => { store = {}; })
     };
 
-    // Mock window.location
+   
     const originalLocation = window.location;
 
     beforeEach(() => {
         store = {};
         vi.clearAllMocks();
         
-        // Reset implementations to ensure clean state
+       
         localStorageMock.getItem.mockImplementation((key) => store[key] || null);
         localStorageMock.setItem.mockImplementation((key, value) => { store[key] = value.toString(); });
         localStorageMock.removeItem.mockImplementation((key) => { delete store[key]; });
         localStorageMock.clear.mockImplementation(() => { store = {}; });
 
-        // Setup localStorage mock
+       
         Object.defineProperty(window, 'localStorage', { 
             value: localStorageMock,
             writable: true 
         });
         
-        // Mock window.location.href
+       
         try {
             delete window.location;
             window.location = { href: '' };
@@ -65,7 +65,7 @@ describe('AuthContext', () => {
     });
 
     afterEach(() => {
-        // Restore window.location
+        
         window.location = originalLocation;
     });
 
@@ -83,7 +83,7 @@ describe('AuthContext', () => {
 
     it('initializes with user if localStorage has data', async () => {
         const mockUser = { id: 1, nombre: 'Test User', rol: 'admin' };
-        // Pre-populate store
+        
         store['token'] = 'fake-token';
         store['user'] = JSON.stringify(mockUser);
 
@@ -118,7 +118,7 @@ describe('AuthContext', () => {
 
         await waitFor(() => expect(screen.queryByText('Loading...')).not.toBeInTheDocument());
 
-        // Trigger login
+       
         const loginButton = screen.getByText('Login');
         await act(async () => {
             loginButton.click();
@@ -154,7 +154,7 @@ describe('AuthContext', () => {
     });
 
     it('handles logout', async () => {
-        // Setup initial logged in state
+        
         const mockUser = { id: 1, nombre: 'Test User', rol: 'admin' };
         store['token'] = 'fake-token';
         store['user'] = JSON.stringify(mockUser);

@@ -4,7 +4,7 @@ import AdminSalesHistory from './AdminSalesHistory';
 import { salesService, usersService } from '../../api/services';
 import Swal from 'sweetalert2';
 
-// Mock dependencies
+
 vi.mock('../../api/services', () => ({
     salesService: {
         getAdminHistory: vi.fn(),
@@ -26,7 +26,6 @@ vi.mock('sweetalert2', () => ({
     },
 }));
 
-// Mock icons to easily find buttons
 vi.mock('@mui/icons-material/Edit', () => ({ default: () => <span data-testid="EditIcon">Edit</span> }));
 vi.mock('@mui/icons-material/Delete', () => ({ default: () => <span data-testid="DeleteIcon">Delete</span> }));
 vi.mock('@mui/icons-material/Save', () => ({ default: () => <span data-testid="SaveIcon">Save</span> }));
@@ -97,20 +96,19 @@ describe('AdminSalesHistory', () => {
             expect(screen.getByText('#101')).toBeInTheDocument();
         });
 
-        // Find the edit button (it's an IconButton containing the EditIcon)
+     
         const editIcon = screen.getByTestId('EditIcon');
         const editButton = editIcon.closest('button');
         fireEvent.click(editButton);
 
-        // Check if modal opened
+       
         expect(screen.getByText('Editar Venta #101')).toBeInTheDocument();
 
-        // Change values
-        // Note: MUI Select is tricky. We can try changing the text field for amount.
+    
         const amountInput = screen.getByLabelText(/Monto Final de la Venta/i);
         fireEvent.change(amountInput, { target: { value: '6000' } });
 
-        // Click Save
+        
         const saveButton = screen.getByText('Guardar Cambios');
         fireEvent.click(saveButton);
 
@@ -134,7 +132,7 @@ describe('AdminSalesHistory', () => {
         usersService.findAll.mockResolvedValue({ data: [] });
         salesService.getAdminHistory.mockResolvedValue({ data: mockSales });
         
-        // Mock Swal to confirm immediately
+      
         Swal.fire.mockResolvedValue({ isConfirmed: true });
         salesService.delete.mockResolvedValue({});
 
