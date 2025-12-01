@@ -1012,7 +1012,7 @@ const Home = () => {
                             </Grid>
 
                             <Grid size={{ xs: 12, md: 9 }}>
-                                <Box display="flex" gap={1} flexWrap="wrap" justifyContent="flex-end">
+                                <Box display="flex" gap={1} flexWrap="wrap" justifyContent="flex-start">
                                     {categoriesToShow.map(cat => (
                                         <Chip
                                             key={cat}

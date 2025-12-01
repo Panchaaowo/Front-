@@ -65,11 +65,20 @@ const Inventory = () => {
                 getCategorias() 
             ]);
             
-            const categoriesMap = new Map(categoriesData.map(c => [c.id, c]));
-            const productsWithCategory = productsData.map(p => ({
-                ...p,
-                categoria: categoriesMap.get(p.categoriaId) 
-            }));
+            const productsWithCategory = productsData.map(p => {
+                if (p.categoria && typeof p.categoria === 'object') {
+                    return p;
+                }
+                if (p.categoriaId) {
+                    const foundCat = categoriesData.find(c => c.id == p.categoriaId);
+                    if (foundCat) {
+                        return { ...p, categoria: foundCat };
+                    }
+                }
+
+        
+                return p;
+            });
 
             setProducts(productsWithCategory);
             setCategories(categoriesData);
