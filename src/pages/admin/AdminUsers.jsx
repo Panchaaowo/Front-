@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { usersService } from '../../api/services';
-import AdminLayout from '../../components/AdminLayout';
+import AdminLayout from '../../components/templates/AdminLayout';
 import Swal from 'sweetalert2';
 import { 
     Paper, Typography, Box, TextField, Button, Grid, FormControl, 
     InputLabel, Select, MenuItem, Table, TableBody, TableCell, 
-    TableContainer, TableHead, TableRow, Chip, Avatar,
+    TableContainer, TableHead, TableRow, Avatar,
     InputAdornment, Card, CardContent, Divider, Stack
 } from '@mui/material';
+import StatusChip from '../../components/atoms/StatusChip';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import BadgeIcon from '@mui/icons-material/Badge';
 import LockIcon from '@mui/icons-material/Lock';
@@ -16,7 +17,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 
 const themeColors = {
-    primary: '#d97706',    
+    primary: '#2e7d32',    
     secondary: '#64748b', 
     background: '#f8fafc', 
     text: '#1e293b',       
@@ -65,7 +66,7 @@ const AdminUsers = () => {
 
             <Grid container spacing={4}>
             
-                <Grid item xs={12} md={4}>
+                <Grid size={{ xs: 12, md: 4 }}>
                     <Card 
                         elevation={0} 
                         sx={{ 
@@ -166,7 +167,7 @@ const AdminUsers = () => {
                                             mt: 2, 
                                             bgcolor: themeColors.primary, 
                                             fontWeight: 'bold', 
-                                            '&:hover': { bgcolor: '#b45309' },
+                                            '&:hover': { bgcolor: '#1b5e20' },
                                             borderRadius: 2
                                         }}
                                     >
@@ -179,7 +180,7 @@ const AdminUsers = () => {
                 </Grid>
 
                 
-                <Grid item xs={12} md={8}>
+                <Grid size={{ xs: 12, md: 8 }}>
                     <TableContainer 
                         component={Paper} 
                         elevation={0} 
@@ -232,15 +233,9 @@ const AdminUsers = () => {
                                             {u.rut}
                                         </TableCell>
                                         <TableCell>
-                                            <Chip 
+                                            <StatusChip 
                                                 label={u.rol.toUpperCase()} 
-                                                size="small" 
-                                                sx={{ 
-                                                    bgcolor: u.rol === 'admin' ? '#f3e8ff' : '#dbeafe', 
-                                                    color: u.rol === 'admin' ? '#6b21a8' : '#1e40af',
-                                                    fontWeight: 'bold',
-                                                    borderRadius: 1
-                                                }} 
+                                                color={u.rol === 'admin' ? 'warning' : 'info'} 
                                             />
                                         </TableCell>
                                         <TableCell sx={{ color: 'text.secondary' }}>

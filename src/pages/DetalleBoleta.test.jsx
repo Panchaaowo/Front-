@@ -19,17 +19,14 @@ describe('DetalleBoleta Component', () => {
     it('renders item details correctly', () => {
         render(<DetalleBoleta item={mockItem} subtotal={mockSubtotal} />);
 
-        // Check name
         expect(screen.getByText('Torta de Mil Hojas')).toBeInTheDocument();
 
-        // Check quantity
         expect(screen.getByText('x2')).toBeInTheDocument();
 
-        // Check price per unit formatted
-        // Note: We use a regex to match the text flexibly
+        
         expect(screen.getByText(/a \$15.000 c\/u/)).toBeInTheDocument();
 
-        // Check subtotal formatted
+   
         expect(screen.getByText('$30.000')).toBeInTheDocument();
     });
 

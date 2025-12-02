@@ -3,7 +3,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import App from './App';
 
-// Mock pages
+
 vi.mock('./pages/Login', () => ({ default: () => <div data-testid="login-page">Login Page</div> }));
 vi.mock('./pages/Home', () => ({ default: () => <div data-testid="home-page">Home Page</div> }));
 vi.mock('./pages/Boleta', () => ({ default: () => <div data-testid="boleta-page">Boleta Page</div> }));
@@ -13,7 +13,7 @@ vi.mock('./pages/admin/AdminUsers', () => ({ default: () => <div data-testid="us
 vi.mock('./pages/admin/Categories', () => ({ default: () => <div data-testid="categories-page">Categories Page</div> }));
 vi.mock('./pages/admin/AdminSalesHistory', () => ({ default: () => <div data-testid="sales-history-page">Sales History Page</div> }));
 
-// Mock Context Providers
+
 vi.mock('./context/AuthContext', () => ({
     AuthProvider: ({ children }) => <div>{children}</div>
 }));
@@ -21,8 +21,8 @@ vi.mock('./context/CartContext', () => ({
     CartProvider: ({ children }) => <div>{children}</div>
 }));
 
-// Mock ProtectedRoute
-vi.mock('./components/ProtectedRoute', () => ({
+
+vi.mock('./components/organisms/ProtectedRoute', () => ({
     default: ({ children }) => <div>{children}</div>
 }));
 

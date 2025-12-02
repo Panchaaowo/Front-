@@ -13,7 +13,6 @@ import {
     getCategorias
 } from './services';
 
-// Mock axios instance
 vi.mock('./axiosConfig', () => ({
     default: {
         get: vi.fn(),

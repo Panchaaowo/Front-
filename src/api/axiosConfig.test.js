@@ -19,14 +19,13 @@ describe('axiosConfig', () => {
         
         mocks = { use, create };
 
-        // Mock axios using doMock to ensure it applies to the dynamic import
         vi.doMock('axios', () => ({
             default: {
                 create: create
             }
         }));
 
-        // Mock localStorage
+      
         let store = {};
         localStorageMock = {
             getItem: vi.fn((key) => store[key] || null),
@@ -40,7 +39,7 @@ describe('axiosConfig', () => {
             writable: true
         });
 
-        // Import the module under test dynamically
+     
         const module = await import('./axiosConfig');
         api = module.default;
     });

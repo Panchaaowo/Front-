@@ -34,7 +34,7 @@ describe('Login Component', () => {
         render(<Login />);
         
         expect(screen.getByText('Bienvenido')).toBeInTheDocument();
-        expect(screen.getByText('Inicia sesión en Pastelería Dulce Sabor')).toBeInTheDocument();
+        expect(screen.getByText('Inicia sesión en Mundo Mascota')).toBeInTheDocument();
         expect(screen.getByLabelText(/RUT de Usuario/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/Contraseña/i)).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /Ingresar al Sistema/i })).toBeInTheDocument();

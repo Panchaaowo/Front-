@@ -22,7 +22,7 @@ vi.mock('sweetalert2', () => ({
 }));
 
 
-vi.mock('../../components/AdminLayout', () => ({
+vi.mock('../../components/templates/AdminLayout', () => ({
     default: ({ children }) => <div data-testid="admin-layout">{children}</div>,
 }));
 

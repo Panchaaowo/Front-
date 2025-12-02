@@ -1,10 +1,10 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import AdminLayout from './AdminLayout';
-import { useAuth } from '../context/AuthContext';
+import Sidebar from './Sidebar';
+import { useAuth } from '../../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-vi.mock('../context/AuthContext', () => ({
+vi.mock('../../context/AuthContext', () => ({
     useAuth: vi.fn(),
 }));
 
@@ -12,7 +12,6 @@ vi.mock('react-router-dom', () => ({
     useNavigate: vi.fn(),
     useLocation: vi.fn(),
 }));
-
 
 vi.mock('@mui/icons-material/Dashboard', () => ({ default: () => <span data-testid="DashboardIcon">Dashboard</span> }));
 vi.mock('@mui/icons-material/Inventory', () => ({ default: () => <span data-testid="InventoryIcon">Inventory</span> }));
@@ -23,7 +22,7 @@ vi.mock('@mui/icons-material/PointOfSale', () => ({ default: () => <span data-te
 vi.mock('@mui/icons-material/Logout', () => ({ default: () => <span data-testid="LogoutIcon">Logout</span> }));
 vi.mock('@mui/icons-material/History', () => ({ default: () => <span data-testid="HistoryIcon">History</span> }));
 
-describe('AdminLayout Component', () => {
+describe('Sidebar Component', () => {
     const mockNavigate = vi.fn();
     const mockLogout = vi.fn();
 
@@ -34,20 +33,8 @@ describe('AdminLayout Component', () => {
         useAuth.mockReturnValue({ logout: mockLogout });
     });
 
-    it('renders layout structure and children', () => {
-        render(
-            <AdminLayout>
-                <div data-testid="child-content">Main Content</div>
-            </AdminLayout>
-        );
-
-        expect(screen.getByText('1000 Sabores')).toBeInTheDocument();
-        expect(screen.getByText('Admin Panel')).toBeInTheDocument();
-        expect(screen.getByTestId('child-content')).toBeInTheDocument();
-    });
-
     it('renders all menu items', () => {
-        render(<AdminLayout>Content</AdminLayout>);
+        render(<Sidebar />);
 
         expect(screen.getByText('Panel de Control')).toBeInTheDocument();
         expect(screen.getByText('Inventario')).toBeInTheDocument();
@@ -58,7 +45,7 @@ describe('AdminLayout Component', () => {
     });
 
     it('navigates to correct paths when menu items are clicked', () => {
-        render(<AdminLayout>Content</AdminLayout>);
+        render(<Sidebar />);
 
         fireEvent.click(screen.getByText('Inventario'));
         expect(mockNavigate).toHaveBeenCalledWith('/admin/inventory', { state: undefined });
@@ -68,14 +55,14 @@ describe('AdminLayout Component', () => {
     });
 
     it('navigates to "Mi Cuadre Diario" with state', () => {
-        render(<AdminLayout>Content</AdminLayout>);
+        render(<Sidebar />);
 
         fireEvent.click(screen.getByText('Mi Cuadre Diario'));
         expect(mockNavigate).toHaveBeenCalledWith('/home', { state: { openCashout: true } });
     });
 
     it('navigates to "Ir a Caja"', () => {
-        render(<AdminLayout>Content</AdminLayout>);
+        render(<Sidebar />);
 
         const cajaButton = screen.getByRole('button', { name: /Ir a Caja/i });
         fireEvent.click(cajaButton);
@@ -83,7 +70,7 @@ describe('AdminLayout Component', () => {
     });
 
     it('calls logout when "Salir" is clicked', () => {
-        render(<AdminLayout>Content</AdminLayout>);
+        render(<Sidebar />);
 
         const logoutButton = screen.getByRole('button', { name: /Salir/i });
         fireEvent.click(logoutButton);

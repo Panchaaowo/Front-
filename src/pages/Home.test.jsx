@@ -97,7 +97,7 @@ describe('Home Component', () => {
     it('renders home and fetches products', async () => {
         render(<Home />);
         
-        expect(screen.getByText('Pastelería 1000 Sabores')).toBeInTheDocument();
+        expect(screen.getByText('Mundo Mascota')).toBeInTheDocument();
         
         await waitFor(() => {
             expect(productsService.getAll).toHaveBeenCalled();

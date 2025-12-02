@@ -1,24 +1,24 @@
 import { useState, useEffect } from 'react';
 import { salesService, usersService } from "../../api/services";
-import AdminLayout from '../../components/AdminLayout';
+import AdminLayout from '../../components/templates/AdminLayout';
 import Swal from 'sweetalert2';
 import { 
     Paper, Typography, Box, Table, TableBody, TableCell, 
     TableContainer, TableHead, TableRow, Select, MenuItem, FormControl, 
-    InputLabel, CircularProgress, IconButton, Dialog, DialogTitle, 
+    InputLabel, CircularProgress, Dialog, DialogTitle, 
     DialogContent, DialogActions, TextField, Button, Alert,
-    Chip, Stack, Tooltip, Card, CardContent, Grid, InputAdornment
+    Stack, Card, CardContent, Grid, InputAdornment
 } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import StatusChip from '../../components/atoms/StatusChip';
+import ActionButton from '../../components/atoms/ActionButton';
 
 
 const themeColors = {
-    primary: '#d97706',   
+    primary: '#2e7d32',   
     secondary: '#64748b',  
     background: '#f8fafc',
     text: '#1e293b',      
@@ -39,7 +39,7 @@ const getPaymentColor = (medioPago) => {
         case 'DEBITO':
             return 'info';
         case 'CREDITO':
-            return 'secondary';
+            return 'warning';
         default:
             return 'default';
     }
@@ -89,7 +89,7 @@ const EditSaleModal = ({ open, handleClose, saleData, handleSave }) => {
             }}
         >
             <DialogTitle sx={{ pb: 1 }}>
-                <Typography variant="h6" fontWeight="bold" color={themeColors.text}>
+                <Typography variant="h6" component="div" fontWeight="bold" color={themeColors.text}>
                     Editar Venta #{saleData.folio}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -186,15 +186,17 @@ const AdminSalesHistory = () => {
         }
     };
 
+    const clearFilters = () => {
+        setSelectedUserId('');
+        setSelectedDate('');
+    };
+
     const fetchSalesHistory = async (userId, date) => {
         setLoading(true);
         try {
-            const filters = {};
-            if (userId) filters.vendedorId = userId;
-            if (date) filters.fecha = date;
-
-            const res = await salesService.getAdminHistory(filters); 
-            
+            // MODIFICACIÓN: No enviamos filtros al backend para asegurar que traemos todo y filtramos localmente.
+            // Esto ayuda a depurar si el problema es el filtrado de fecha del servidor o el ID del vendedor.
+            const res = await salesService.getAdminHistory({}); 
             
             let rawSales = [];
             if (Array.isArray(res.data)) {
@@ -207,27 +209,71 @@ const AdminSalesHistory = () => {
                 rawSales = res.data.resumen.transactions;
             }
 
-            const formattedSales = rawSales.map(sale => {
+            let formattedSales = rawSales.map(sale => {
                  let vendedorName = 'N/A';
-                 if (typeof sale.vendedor === 'string') {
+                 let vendedorId = null;
+
+                 if (sale.vendedor && typeof sale.vendedor === 'object') {
+                     vendedorName = sale.vendedor.nombre || sale.vendedor.name || 'Vendedor';
+                     vendedorId = sale.vendedor.id;
+                 } else if (typeof sale.vendedor === 'string') {
                      vendedorName = sale.vendedor;
-                 } else if (sale.vendedor && sale.vendedor.name) {
-                     vendedorName = sale.vendedor.name;
-                 } else if (sale.vendedor && sale.vendedor.nombre) {
-                     vendedorName = sale.vendedor.nombre; 
+                 } else if (sale.usuario && typeof sale.usuario === 'object') {
+                     vendedorName = sale.usuario.nombre || sale.usuario.name;
+                     vendedorId = sale.usuario.id;
                  }
 
-                 
+                 if (!vendedorId) {
+                     vendedorId = sale.vendedorId || sale.userId;
+                 }
+
                  const total = Number(sale.total || sale.resumen?.total || 0);
                  const medioPago = sale.medioPago || sale.resumen?.medioPago || 'EFECTIVO';
 
                  return {
                     folio: sale.folio || sale.id,
-                    fecha: sale.fecha,
-                    vendedor: vendedorName, 
+                    fecha: sale.fecha || sale.createdAt, 
+                    vendedor: vendedorName,
+                    vendedorId: vendedorId, 
                     resumen: { medioPago, total } 
                  };
             });
+
+            // Ordenar por fecha descendente (más reciente primero)
+            formattedSales.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+            // FILTRO CLIENT-SIDE DE VENDEDOR (Relajado)
+            if (userId) {
+                formattedSales = formattedSales.filter(sale => {
+                    // 1. Coincidencia exacta de ID
+                    if (sale.vendedorId && String(sale.vendedorId) === String(userId)) return true;
+                    
+                    // 2. Coincidencia por nombre (Fallback por si el ID no viene)
+                    const selectedUser = users.find(u => String(u.id) === String(userId));
+                    if (selectedUser) {
+                        const nameToFind = (selectedUser.name || selectedUser.nombre || '').toLowerCase();
+                        const saleVendorName = (sale.vendedor || '').toLowerCase();
+                        if (nameToFind && saleVendorName.includes(nameToFind)) return true;
+                    }
+                    
+                    return false;
+                });
+            }
+
+            // FILTRO CLIENT-SIDE DE FECHA
+            if (date) {
+                formattedSales = formattedSales.filter(sale => {
+                    if (!sale.fecha) return false;
+                    // Convertimos la fecha UTC de la venta a la fecha LOCAL del navegador
+                    const txDate = new Date(sale.fecha);
+                    const year = txDate.getFullYear();
+                    const month = String(txDate.getMonth() + 1).padStart(2, '0');
+                    const day = String(txDate.getDate()).padStart(2, '0');
+                    const txDateLocal = `${year}-${month}-${day}`;
+                    
+                    return txDateLocal === date;
+                });
+            }
 
             setSales(formattedSales); 
         } catch (error) {
@@ -326,7 +372,7 @@ const AdminSalesHistory = () => {
                         </MenuItem>
                         {users.map((u) => (
                             <MenuItem key={u.id} value={u.id}>
-                                {u.name} ({u.rol})
+                                {(u.name || u.nombre || '').replace(/Adoptapet/gi, 'Mundo Mascota')} ({u.rol})
                             </MenuItem>
                         ))}
                     </Select>
@@ -348,6 +394,16 @@ const AdminSalesHistory = () => {
                         ),
                     }}
                 />
+                
+                <Button 
+                    variant="outlined" 
+                    color="secondary" 
+                    size="small" 
+                    onClick={clearFilters}
+                    sx={{ height: 40 }}
+                >
+                    Limpiar
+                </Button>
             </Paper>
 
             {loading ? (
@@ -387,16 +443,14 @@ const AdminSalesHistory = () => {
                                         
                                         <TableCell sx={{ fontWeight: 'bold', color: themeColors.text }}>#{sale.folio}</TableCell> 
                                         <TableCell>{new Date(sale.fecha).toLocaleDateString()}</TableCell>
-                                        <TableCell>{sale.vendedor}</TableCell> 
+                                        <TableCell>{(sale.vendedor || '').replace(/Adoptapet/gi, 'Mundo Mascota')}</TableCell> 
                                         
                                         
                                         <TableCell>
-                                            <Chip 
+                                            <StatusChip 
                                                 label={sale.resumen?.medioPago} 
-                                                size="small"
                                                 color={getPaymentColor(sale.resumen?.medioPago)}
                                                 variant="outlined"
-                                                sx={{ fontWeight: 'bold' }}
                                             />
                                         </TableCell>
                                         
@@ -411,33 +465,16 @@ const AdminSalesHistory = () => {
                                      
                                         <TableCell align="center">
                                             <Stack direction="row" spacing={1} justifyContent="center">
-                                                <Tooltip title="Editar Venta">
-                                                    <IconButton 
-                                                        size="small" 
-                                                        onClick={() => handleEdit(sale)}
-                                                        sx={{ 
-                                                            color: themeColors.info, 
-                                                            bgcolor: '#eff6ff',
-                                                            '&:hover': { bgcolor: '#dbeafe' } 
-                                                        }}
-                                                    >
-                                                        <EditIcon fontSize="small" />
-                                                    </IconButton>
-                                                </Tooltip>
-                                                
-                                                <Tooltip title="Anular Venta">
-                                                    <IconButton 
-                                                        size="small" 
-                                                        onClick={() => handleDevolucion(sale.folio)}
-                                                        sx={{ 
-                                                            color: themeColors.error, 
-                                                            bgcolor: '#fef2f2',
-                                                            '&:hover': { bgcolor: '#fee2e2' } 
-                                                        }}
-                                                    >
-                                                        <DeleteIcon fontSize="small" /> 
-                                                    </IconButton>
-                                                </Tooltip>
+                                                <ActionButton 
+                                                    type="edit" 
+                                                    onClick={() => handleEdit(sale)} 
+                                                    tooltip="Editar Venta"
+                                                />
+                                                <ActionButton 
+                                                    type="delete" 
+                                                    onClick={() => handleDevolucion(sale.folio)} 
+                                                    tooltip="Anular Venta"
+                                                />
                                             </Stack>
                                         </TableCell>
                                     </TableRow>

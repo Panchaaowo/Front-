@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext'; 
-import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRoute from './components/organisms/ProtectedRoute';
 
 
 import Login from './pages/Login';

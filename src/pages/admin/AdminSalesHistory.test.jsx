@@ -16,7 +16,7 @@ vi.mock('../../api/services', () => ({
     },
 }));
 
-vi.mock('../../components/AdminLayout', () => ({
+vi.mock('../../components/templates/AdminLayout', () => ({
     default: ({ children }) => <div data-testid="admin-layout">{children}</div>,
 }));
 
@@ -58,7 +58,7 @@ describe('AdminSalesHistory', () => {
         const mockSales = [
             {
                 folio: 101,
-                fecha: '2023-10-27',
+                fecha: new Date().toISOString(),
                 vendedor: 'Vendedor 1',
                 resumen: { medioPago: 'EFECTIVO', total: 5000 }
             }
@@ -81,7 +81,7 @@ describe('AdminSalesHistory', () => {
         const mockSales = [
             {
                 folio: 101,
-                fecha: '2023-10-27',
+                fecha: new Date().toISOString(),
                 vendedor: 'Vendedor 1',
                 resumen: { medioPago: 'EFECTIVO', total: 5000 }
             }
@@ -124,7 +124,7 @@ describe('AdminSalesHistory', () => {
         const mockSales = [
             {
                 folio: 101,
-                fecha: '2023-10-27',
+                fecha: new Date().toISOString(),
                 vendedor: 'Vendedor 1',
                 resumen: { medioPago: 'EFECTIVO', total: 5000 }
             }

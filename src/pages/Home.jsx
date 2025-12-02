@@ -36,7 +36,7 @@ const API_URL_BASE = 'http://localhost:3006';
 
 const STATIC_CATEGORIES = ['Todas'];
 
-const brandColor = '#d97706';
+const brandColor = '#2e7d32';
 const ivaRate = 0.19;
 
 const BASE_CAJA_PLACEHOLDER = 50000;
@@ -938,7 +938,7 @@ const Home = () => {
                             <StorefrontIcon sx={{ color: brandColor, fontSize: 32 }} />
                             <Box>
                                 <Typography variant="h6" fontWeight="bold" sx={{ fontFamily: 'serif', color: '#333', lineHeight: 1.2 }}>
-                                    Pastelería 1000 Sabores
+                                   Mundo Mascota
                                 </Typography>
                                 <Typography variant="caption" color="text.secondary">
                                     Punto de Venta
@@ -949,7 +949,7 @@ const Home = () => {
                         <Box display="flex" alignItems="center" gap={2}>
                             <Chip 
                                 icon={<PersonIcon />} 
-                                label={`${user?.nombre || 'Usuario'} ${isAdmin ? '(Admin)' : ''}`} 
+                                label={`${(user?.nombre || 'Usuario').replace(/Adoptapet/gi, 'Mundo Mascota')} ${isAdmin ? '(Admin)' : ''}`} 
                                 variant="outlined" 
                                 sx={{ borderColor: '#e0e0e0' }}
                             />
@@ -970,7 +970,7 @@ const Home = () => {
                                     variant="contained"
                                     startIcon={<DashboardIcon />}
                                     onClick={() => navigate('/admin/dashboard')}
-                                    sx={{ bgcolor: brandColor, '&:hover': { bgcolor: '#b45309' } }}
+                                    sx={{ bgcolor: brandColor, '&:hover': { bgcolor: '#1b5e20' } }}
                                 >
                                     Panel Admin
                                 </Button>
@@ -1026,7 +1026,7 @@ const Home = () => {
                                                 border: '1px solid',
                                                 borderColor: categoriaSeleccionada === cat ? brandColor : '#e0e0e0',
                                                 '&:hover': {
-                                                    bgcolor: categoriaSeleccionada === cat ? '#b45309' : '#f5f5f5'
+                                                    bgcolor: categoriaSeleccionada === cat ? '#1b5e20' : '#f5f5f5'
                                                 }
                                             }}
                                         />
@@ -1096,7 +1096,7 @@ const Home = () => {
                                 
                                 <CardContent sx={{ flexGrow: 1, p: 2 }}>
                                     <Typography variant="caption" color="text.secondary" fontWeight="bold" textTransform="uppercase" letterSpacing={1}>
-                                        {prod.categoria?.nombre || 'Pastelería'}
+                                        {prod.categoria?.nombre || 'Mundo Mascota'}
                                     </Typography>
                                     <Typography 
                                         variant="subtitle1" 
@@ -1276,8 +1276,8 @@ const Home = () => {
                                 borderRadius: 2,
                                 fontSize: '1.1rem',
                                 fontWeight: 'bold',
-                                boxShadow: '0 4px 12px rgba(217, 119, 6, 0.4)',
-                                '&:hover': { bgcolor: '#b45309' } 
+                                boxShadow: '0 4px 12px rgba(46, 125, 50, 0.4)',
+                                '&:hover': { bgcolor: '#1b5e20' } 
                             }}
                             disabled={cart.length === 0}
                             onClick={irAPagar}

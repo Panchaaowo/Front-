@@ -25,7 +25,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 const PAYMENT_OPTIONS = [
-    { id: 'EFECTIVO', label: 'Efectivo', icon: <MoneyIcon fontSize="large" />, color: '#d97706' },
+    { id: 'EFECTIVO', label: 'Efectivo', icon: <MoneyIcon fontSize="large" />, color: '#2e7d32' },
     { id: 'DEBITO', label: 'Débito', icon: <CreditCardIcon fontSize="large" />, color: '#10b981' },
     { id: 'CREDITO', label: 'Crédito', icon: <CreditCardIcon fontSize="large" />, color: '#3b82f6' },
 ];
@@ -40,7 +40,7 @@ const Boleta = () => {
     const [folioVenta, setFolioVenta] = useState(null); 
     const [openReceipt, setOpenReceipt] = useState(false); 
 
-    const brandColor = '#d97706';
+    const brandColor = '#2e7d32';
     const valorNeto = Math.round(total / 1.19);
     const valorIva = total - valorNeto;
     
@@ -71,7 +71,8 @@ const Boleta = () => {
             const ventaPayload = {
                 items: itemsPayload,
                 medioPago: metodo,
-                montoEntregado: montoEntregado 
+                montoEntregado: montoEntregado,
+                vendedorId: user?.id 
             };
 
             
@@ -155,7 +156,7 @@ const Boleta = () => {
                         >
                            
                             <Box textAlign="center" mb={2}>
-                                <Typography variant="subtitle2" fontWeight="bold" textTransform="uppercase">PASTELERÍA 1000 SABORES</Typography>
+                                <Typography variant="subtitle2" fontWeight="bold" textTransform="uppercase">VentaPett</Typography>
                                 <Typography variant="caption" display="block">AV. Matta 4234</Typography>
                                 <Typography variant="caption" display="block">{new Date().toLocaleDateString()} - {new Date().toLocaleTimeString()}</Typography>
                             </Box>
@@ -222,7 +223,7 @@ const Boleta = () => {
                         variant="contained" 
                         color="primary"
                         startIcon={<PrintIcon />}
-                        sx={{ bgcolor: brandColor, '&:hover': { bgcolor: '#b45309' } }}
+                        sx={{ bgcolor: brandColor, '&:hover': { bgcolor: '#1b5e20' } }}
                     >
                         Imprimir
                     </Button>
@@ -366,7 +367,7 @@ const Boleta = () => {
                                                 px: 1,
                                                 borderRadius: 2,
                                                 border: metodo === m.id ? `2px solid ${brandColor}` : '1px solid #e0e0e0',
-                                                bgcolor: metodo === m.id ? '#fff8e1' : 'white',
+                                                bgcolor: metodo === m.id ? '#e8f5e9' : 'white',
                                                 color: metodo === m.id ? brandColor : '#666',
                                                 display: 'flex',
                                                 flexDirection: 'column',
@@ -426,8 +427,8 @@ const Boleta = () => {
                                     borderRadius: 2, 
                                     fontSize: '1.1rem', 
                                     fontWeight: 'bold', 
-                                    boxShadow: '0 4px 12px rgba(217, 119, 6, 0.4)',
-                                    '&:hover': { bgcolor: '#b45309' } 
+                                    boxShadow: '0 4px 12px rgba(46, 125, 50, 0.4)',
+                                    '&:hover': { bgcolor: '#1b5e20' } 
                                 }}
                                 startIcon={<CheckCircleIcon />}
                             >
@@ -444,13 +445,13 @@ const Boleta = () => {
             <div id="printable-receipt">
                 <Box sx={{ fontFamily: '"Courier New", Courier, monospace', textAlign: 'center' }}>
                     <Typography variant="h6" fontWeight="bold" textTransform="uppercase" sx={{ letterSpacing: 2, fontSize: '1.2rem' }}>
-                        Pastelería
+                        Mundo Mascota
                     </Typography>
                     <Typography variant="h5" fontWeight="bold" textTransform="uppercase" sx={{ mb: 1, fontSize: '1.4rem' }}>
-                        1000 Sabores
+                        Pet Shop
                     </Typography>
                     <Typography variant="caption" display="block" sx={{ fontSize: '0.8rem' }}>R.U.T.: 76.543.210-K</Typography>
-                    <Typography variant="caption" display="block" sx={{ fontSize: '0.8rem' }}>GIRO: Pasteleria 1000 Sabores</Typography>
+                    <Typography variant="caption" display="block" sx={{ fontSize: '0.8rem' }}>GIRO: Venta de Mascotas</Typography>
                     <Typography variant="caption" display="block" sx={{ fontSize: '0.8rem' }}>CASA MATRIZ: AV. Matta 4234</Typography>
                     <Typography variant="caption" display="block" sx={{ fontSize: '0.8rem' }}>SANTIAGO, CHILE</Typography>
                     <Typography variant="caption" display="block" mt={1} sx={{ fontSize: '0.8rem' }}>FONO: +56 9 1234 5678</Typography>
@@ -521,7 +522,7 @@ const Boleta = () => {
               
                 <Box textAlign="center" sx={{ fontFamily: '"Courier New", Courier, monospace' }}>
                     <Typography variant="body2" fontWeight="bold" sx={{ fontSize: '0.9rem' }}>¡GRACIAS POR SU COMPRA!</Typography>
-                    <Typography variant="caption" display="block" mt={1} sx={{ fontSize: '0.8rem' }}>VISÍTENOS EN WWW.1000SABORES.CL</Typography>
+                    <Typography variant="caption" display="block" mt={1} sx={{ fontSize: '0.8rem' }}>VISÍTENOS EN WWW.MundoMascota.CL</Typography>
                     
                   
                     <Box mt={2} sx={{ height: 30, bgcolor: '#000', width: '90%', mx: 'auto', opacity: 0.8, maskImage: 'repeating-linear-gradient(90deg, #000, #000 2px, transparent 2px, transparent 4px)' }} />

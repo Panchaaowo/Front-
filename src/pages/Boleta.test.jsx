@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { salesService } from '../api/services';
 import Swal from 'sweetalert2';
 
-// Mock dependencies
+
 vi.mock('../context/CartContext', () => ({
     useCart: vi.fn(),
 }));
@@ -32,7 +32,7 @@ vi.mock('sweetalert2', () => ({
     },
 }));
 
-// Mock child component to simplify testing
+
 vi.mock('./DetalleBoleta', () => ({
     default: ({ item, subtotal }) => (
         <div data-testid="detalle-boleta">
@@ -41,7 +41,7 @@ vi.mock('./DetalleBoleta', () => ({
     ),
 }));
 
-// Mock window.print
+
 window.print = vi.fn();
 
 describe('Boleta Component', () => {
@@ -52,7 +52,7 @@ describe('Boleta Component', () => {
         { id: 1, nombre: 'Torta Chocolate', precio: 10000, cantidad: 1 },
         { id: 2, nombre: 'Pie de Limón', precio: 5000, cantidad: 2 },
     ];
-    const mockTotal = 20000; // 10000 + 5000*2
+    const mockTotal = 20000; 
 
     beforeEach(() => {
         vi.clearAllMocks();
@@ -74,11 +74,11 @@ describe('Boleta Component', () => {
         expect(screen.getByText('Juan Perez')).toBeInTheDocument();
         expect(screen.getByText('Resumen del Pedido')).toBeInTheDocument();
         
-        // Check items (via mocked DetalleBoleta)
+       
         expect(screen.getByText('Torta Chocolate - $10000')).toBeInTheDocument();
         expect(screen.getByText('Pie de Limón - $10000')).toBeInTheDocument();
         
-        // Check totals
+      
         const totalElements = screen.getAllByText(`$${mockTotal.toLocaleString('es-CL')}`);
         expect(totalElements.length).toBeGreaterThan(0);
     });
@@ -98,16 +98,14 @@ describe('Boleta Component', () => {
     it('handles cash payment calculation', () => {
         render(<Boleta />);
         
-        // Default is Cash (Efectivo)
         const input = screen.getByPlaceholderText(`Mínimo: $${mockTotal.toLocaleString('es-CL')}`);
         
-        // Enter amount less than total
+        
         fireEvent.change(input, { target: { value: '10000' } });
-        // Based on component logic: vuelto is 0 if amount < total
-        // We target the h4 which is the main display, avoiding the hidden receipt one
+      
         expect(screen.getByRole('heading', { level: 4, name: '$0' })).toBeInTheDocument();
 
-        // Enter amount greater than total
+        
         fireEvent.change(input, { target: { value: '25000' } });
         expect(screen.getByRole('heading', { level: 4, name: '$5.000' })).toBeInTheDocument(); // Vuelto correcto
     });
@@ -117,11 +115,10 @@ describe('Boleta Component', () => {
         
         const confirmButton = screen.getByRole('button', { name: /CONFIRMAR PAGO/i });
         
-        // Button should be disabled when amount (0) < total
+        
         expect(confirmButton).toBeDisabled();
         
-        // Clicking shouldn't do anything (and fireEvent might not even trigger on disabled)
-        // But just to be sure we verify no service call
+
         expect(salesService.createSale).not.toHaveBeenCalled();
     });
 
@@ -129,7 +126,7 @@ describe('Boleta Component', () => {
         salesService.createSale.mockResolvedValue({ data: { folio: '12345' } });
         render(<Boleta />);
         
-        // Enter sufficient cash
+      
         const input = screen.getByPlaceholderText(`Mínimo: $${mockTotal.toLocaleString('es-CL')}`);
         fireEvent.change(input, { target: { value: '20000' } });
         
@@ -147,7 +144,7 @@ describe('Boleta Component', () => {
             });
         });
 
-        // Check receipt dialog opens
+        
         expect(await screen.findByText('¡Venta Exitosa!')).toBeInTheDocument();
         expect(screen.getByText('Ticket N° 12345')).toBeInTheDocument();
     });
@@ -156,7 +153,7 @@ describe('Boleta Component', () => {
         salesService.createSale.mockResolvedValue({ data: { folio: '67890' } });
         render(<Boleta />);
         
-        // Select Debit
+       
         const debitOption = screen.getByText('Débito');
         fireEvent.click(debitOption);
         
@@ -167,7 +164,7 @@ describe('Boleta Component', () => {
             expect(salesService.createSale).toHaveBeenCalledWith({
                 items: expect.any(Array),
                 medioPago: 'DEBITO',
-                montoEntregado: mockTotal // Should be total for card payments
+                montoEntregado: mockTotal 
             });
         });
     });
@@ -178,7 +175,7 @@ describe('Boleta Component', () => {
         });
         render(<Boleta />);
         
-        // Select Debit to bypass cash check
+        
         fireEvent.click(screen.getByText('Débito'));
         
         const confirmButton = screen.getByRole('button', { name: /CONFIRMAR PAGO/i });
@@ -193,13 +190,13 @@ describe('Boleta Component', () => {
         salesService.createSale.mockResolvedValue({ data: { folio: '12345' } });
         render(<Boleta />);
         
-        // Complete sale
+       
         fireEvent.click(screen.getByText('Débito'));
         fireEvent.click(screen.getByRole('button', { name: /CONFIRMAR PAGO/i }));
         
         await screen.findByText('¡Venta Exitosa!');
         
-        // Close receipt
+       
         const closeButton = screen.getByRole('button', { name: /Cerrar/i });
         fireEvent.click(closeButton);
         

@@ -26,8 +26,8 @@ const DetalleBoleta = ({ item, subtotal }) => {
            
             <Avatar 
                 sx={{ 
-                    bgcolor: '#fff8e1', 
-                    color: '#d97706', 
+                    bgcolor: '#e8f5e9', 
+                    color: '#2e7d32', 
                     width: 48, 
                     height: 48,
                     borderRadius: 2
@@ -75,7 +75,7 @@ const DetalleBoleta = ({ item, subtotal }) => {
                 <Typography 
                     variant="body1" 
                     fontWeight="bold" 
-                    color="#d97706"
+                    color="#2e7d32"
                 >
                     ${subtotal.toLocaleString('es-CL')}
                 </Typography>

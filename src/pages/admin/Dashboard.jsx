@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
-import AdminLayout from '../../components/AdminLayout';
-import { Container, Grid, Paper, Typography, Box, LinearProgress, Button, Avatar, Alert, CircularProgress, Chip } from '@mui/material'; 
+import AdminLayout from '../../components/templates/AdminLayout';
+import StatCard from '../../components/molecules/StatCard';
+import { Container, Grid, Paper, Typography, Box, LinearProgress, Button, Alert, CircularProgress, Chip } from '@mui/material'; 
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import WarningIcon from '@mui/icons-material/Warning';
-import GroupIcon from '@mui/icons-material/Group';
-import DownloadIcon from '@mui/icons-material/Download';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import HistoryIcon from '@mui/icons-material/History';
 import PeopleIcon from '@mui/icons-material/People';
@@ -16,163 +15,150 @@ import { useAuth } from '../../context/AuthContext';
 import { productsService } from '../../api/services'; 
 
 const Dashboard = () => {
-    const navigate = useNavigate();
-    const { user } = useAuth(); 
-    const isAdmin = user && user.rol === 'admin';
-    const brandColor = '#d97706'; 
+    const navigate = useNavigate();
+    const { user } = useAuth(); 
+    const isAdmin = user && user.rol === 'admin';
+    const brandColor = '#2e7d32'; 
 
-    const [topProducts, setTopProducts] = useState([]); 
-    const [loadingTop, setLoadingTop] = useState(true);
-    
-    const stats = {
-        totalPedidos: 145,
-        stockBajoCount: 2,
-        ventasTotalHoy: 195000,
-        productosAtendidos: 12,
-    };
-    
-    const formatCurrency = (value) => `$${Number(value).toLocaleString('es-CL')}`;
+    const [topProducts, setTopProducts] = useState([]);
+    const [loadingTop, setLoadingTop] = useState(true);
+    
+    const [stats, setStats] = useState({
+        totalPedidos: 145,
+        stockBajoCount: 0,
+        ventasTotalHoy: 195000,
+        productosAtendidos: 12,
+    });
+    
+    const formatCurrency = (value) => `$${Number(value).toLocaleString('es-CL')}`;
 
-    const cargarTopProductos = async () => {
-        setLoadingTop(true);
-        try {
-            const res = await productsService.getAll(); 
-            
-            let fetchedProducts = res.data || res;
-            
-            if (fetchedProducts && fetchedProducts.length > 0) {
-                 
-                 const rankedByStock = fetchedProducts
-                     .map(p => ({ 
-                         nombre: p.nombre, 
-                         stock: p.stock 
-                     }))
-                     .sort((a, b) => b.stock - a.stock)
-                     .slice(0, 6); 
+    const cargarTopProductos = async () => {
+        setLoadingTop(true);
+        try {
+            const res = await productsService.getAll(); 
+            
+            let fetchedProducts = res.data || res;
+            
+            if (fetchedProducts && fetchedProducts.length > 0) {
+                 
+                 const rankedByStock = fetchedProducts
+                     .map(p => ({ 
+                         nombre: p.nombre, 
+                         stock: p.stock 
+                     }))
+                     .sort((a, b) => b.stock - a.stock)
+                     .slice(0, 6); 
 
-                 if (rankedByStock.length === 0) {
-                      setTopProducts([]);
-                      return;
-                 }
+                 if (rankedByStock.length === 0) {
+                      setTopProducts([]);
+                 } else {
+                      const maxStock = rankedByStock[0].stock || 1;
+                      
+                      const mappedProducts = rankedByStock.map(prod => ({
+                          name: prod.nombre,
+                          sales: prod.stock, 
+                          val: Math.round((prod.stock / maxStock) * 100), 
+                      }));
+                     
+                     setTopProducts(mappedProducts);
+                 }
 
-                 const maxStock = rankedByStock[0].stock || 1;
-                 
-                 const mappedProducts = rankedByStock.map(prod => ({
-                     name: prod.nombre,
-                     sales: prod.stock, 
-                     val: Math.round((prod.stock / maxStock) * 100), 
-                 }));
-                
-                setTopProducts(mappedProducts);
+                 const lowStockCount = fetchedProducts.filter(p => p.stock < 10).length;
+                 setStats(prev => ({ ...prev, stockBajoCount: lowStockCount }));
 
-            } else {
-                 setTopProducts([]);
-            }
-            
-        } catch (error) {
-            console.error("Error cargando productos:", error);
-            Swal.fire('Error de Conexión', 'No se pudo cargar la lista de productos.', 'error');
-            setTopProducts([]);
-        } finally {
-            setLoadingTop(false);
-        }
-    };
+            } else {
+                 setTopProducts([]);
+                 setStats(prev => ({ ...prev, stockBajoCount: 0 }));
+            }
+        } catch (error) {
+            console.error("Error cargando productos:", error);
+            Swal.fire('Error de Conexión', 'No se pudo cargar la lista de productos.', 'error');
+            setTopProducts([]);
+        } finally {
+            setLoadingTop(false);
+        }
+    };
 
-    useEffect(() => {
-        if (isAdmin) {
-            cargarTopProductos();
-        }
-    }, [isAdmin]);
+    useEffect(() => {
+        if (isAdmin) {
+            cargarTopProductos();
+        }
+    }, [isAdmin]);
 
-    const handleGoToInventory = () => {
-        navigate('/admin/inventory');
-    };
-    
-    const handleGenerateReport = () => {
-        Swal.fire({
-            title: 'Generando Reporte...',
-            text: 'Descarga simulada de Ventas Globales en formato CSV.',
-            icon: 'info',
-            timer: 2000,
-            showConfirmButton: false
-        });
-    };
+    const handleGoToInventory = () => {
+        navigate('/admin/inventory');
+    };
+    
+    const handleGenerateReport = () => {
+        Swal.fire({
+            title: 'Generando Reporte...',
+            text: 'Descarga simulada de Ventas Globales en formato CSV.',
+            icon: 'info',
+            timer: 2000,
+            showConfirmButton: false
+        });
+    };
 
-    if (!isAdmin) {
-        return <AdminLayout><Alert severity="error">Acceso no autorizado. Solo los administradores pueden ver esta página.</Alert></AdminLayout>;
-    }
+    if (!isAdmin) {
+        return <AdminLayout><Alert severity="error">Acceso no autorizado. Solo los administradores pueden ver esta página.</Alert></AdminLayout>;
+    }
 
-    return (
-        <AdminLayout>
-            <Container maxWidth="xl" sx={{ mt: 2 }}>
-                <Typography variant="h4" fontWeight="bold" sx={{ fontFamily: 'serif', color: '#333' }}>
-                    Panel de Control Ejecutivo
-                </Typography>
-                <Typography variant="body2" color="text.secondary" mb={4}></Typography>
+    return (
+        <AdminLayout>
+            <Container maxWidth="xl" sx={{ mt: 2 }}>
+                <Typography variant="h4" fontWeight="bold" sx={{ fontFamily: 'serif', color: '#333' }}>
+                    Panel de Control Ejecutivo
+                </Typography>
+                <Typography variant="body2" color="text.secondary" mb={4}></Typography>
 
                 <Grid container spacing={4} mb={6}>
                     
                     <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                        <Paper elevation={0} sx={{ p: 4, borderRadius: 4, bgcolor: 'white', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', height: '100%', position: 'relative', overflow: 'hidden' }}>
-                            <Box sx={{ position: 'absolute', top: -20, right: -20, width: 100, height: 100, borderRadius: '50%', bgcolor: '#f0fdf4', opacity: 0.5 }} />
-                            <Box display="flex" flexDirection="column" height="100%">
-                                <Box display="flex" alignItems="center" gap={2} mb={3}>
-                                    <Box sx={{ p: 1.5, borderRadius: 3, bgcolor: '#dcfce7', color: '#16a34a', display: 'flex' }}>
-                                        <TrendingUpIcon fontSize="medium" />
-                                    </Box>
-                                    <Typography variant="subtitle1" fontWeight="700" color="#64748b">Pedidos del Día</Typography>
+                        <StatCard 
+                            title="Pedidos del Día" 
+                            value={stats.totalPedidos} 
+                            icon={<TrendingUpIcon fontSize="medium" />} 
+                            color="#16a34a" 
+                            decorationColor="#f0fdf4"
+                            footer={
+                                <Box display="flex" alignItems="center" gap={1}>
+                                    <Chip label="+5%" size="small" sx={{ bgcolor: '#dcfce7', color: '#15803d', fontWeight: 'bold', borderRadius: 1 }} />
+                                    <Typography variant="caption" color="#94a3b8" fontWeight="600">desde ayer</Typography>
                                 </Box>
-                                <Box mt="auto">
-                                    <Typography variant="h3" fontWeight="800" color="#1e293b">{stats.totalPedidos}</Typography>
-                                    <Box display="flex" alignItems="center" gap={1} mt={1}>
-                                        <Chip label="+5%" size="small" sx={{ bgcolor: '#dcfce7', color: '#15803d', fontWeight: 'bold', borderRadius: 1 }} />
-                                        <Typography variant="caption" color="#94a3b8" fontWeight="600">desde ayer</Typography>
-                                    </Box>
-                                </Box>
-                            </Box>
-                        </Paper>
+                            }
+                        />
                     </Grid>
                     
                     <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                        <Paper elevation={0} sx={{ p: 4, borderRadius: 4, bgcolor: 'white', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', height: '100%', position: 'relative', overflow: 'hidden' }}>
-                            <Box sx={{ position: 'absolute', top: -20, right: -20, width: 100, height: 100, borderRadius: '50%', bgcolor: '#fef2f2', opacity: 0.5 }} />
-                            <Box display="flex" flexDirection="column" height="100%">
-                                <Box display="flex" alignItems="center" gap={2} mb={3}>
-                                    <Box sx={{ p: 1.5, borderRadius: 3, bgcolor: '#fee2e2', color: '#dc2626', display: 'flex' }}>
-                                        <WarningIcon fontSize="medium" />
-                                    </Box>
-                                    <Typography variant="subtitle1" fontWeight="700" color="#64748b">Alertas de Stock</Typography>
-                                </Box>
-                                <Box mt="auto">
-                                    <Typography variant="h3" fontWeight="800" color="#1e293b">{stats.stockBajoCount}</Typography>
-                                    <Button 
-                                        size="small" 
-                                        onClick={handleGoToInventory}
-                                        sx={{ mt: 1, color: '#ef4444', fontWeight: 'bold', textTransform: 'none', p: 0, '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' } }}
-                                    >
-                                        Revisar inventario →
-                                    </Button>
-                                </Box>
-                            </Box>
-                        </Paper>
+                        <StatCard 
+                            title="Alertas de Stock" 
+                            value={stats.stockBajoCount} 
+                            icon={<WarningIcon fontSize="medium" />} 
+                            color="#dc2626" 
+                            decorationColor="#fef2f2"
+                            footer={
+                                <Button 
+                                    size="small" 
+                                    onClick={handleGoToInventory}
+                                    sx={{ mt: 0, color: '#ef4444', fontWeight: 'bold', textTransform: 'none', p: 0, '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' } }}
+                                >
+                                    Revisar inventario →
+                                </Button>
+                            }
+                        />
                     </Grid>
                     
                     <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                        <Paper elevation={0} sx={{ p: 4, borderRadius: 4, bgcolor: 'white', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', height: '100%', position: 'relative', overflow: 'hidden' }}>
-                            <Box sx={{ position: 'absolute', top: -20, right: -20, width: 100, height: 100, borderRadius: '50%', bgcolor: '#fff7ed', opacity: 0.5 }} />
-                            <Box display="flex" flexDirection="column" height="100%">
-                                <Box display="flex" alignItems="center" gap={2} mb={3}>
-                                    <Box sx={{ p: 1.5, borderRadius: 3, bgcolor: '#ffedd5', color: brandColor, display: 'flex' }}>
-                                        <ShoppingBagIcon fontSize="medium" />
-                                    </Box>
-                                    <Typography variant="subtitle1" fontWeight="700" color="#64748b">Ventas Hoy</Typography>
-                                </Box>
-                                <Box mt="auto">
-                                    <Typography variant="h3" fontWeight="800" color="#1e293b">{formatCurrency(stats.ventasTotalHoy)}</Typography>
-                                    <Typography variant="body2" color="#94a3b8" fontWeight="600" mt={1}>{stats.productosAtendidos} productos vendidos</Typography>
-                                </Box>
-                            </Box>
-                        </Paper>
+                        <StatCard 
+                            title="Ventas Hoy" 
+                            value={formatCurrency(stats.ventasTotalHoy)} 
+                            icon={<ShoppingBagIcon fontSize="medium" />} 
+                            color={brandColor} 
+                            decorationColor="#fff7ed"
+                            footer={
+                                <Typography variant="body2" color="#94a3b8" fontWeight="600" mt={0}>{stats.productosAtendidos} productos vendidos</Typography>
+                            }
+                        />
                     </Grid>
                 </Grid>
                                 
@@ -328,9 +314,9 @@ const Dashboard = () => {
                         )}
                     </Paper>
                 </Box>
-            </Container>
-        </AdminLayout>
-    );
+            </Container>
+        </AdminLayout>
+    );
 };
 
 export default Dashboard;

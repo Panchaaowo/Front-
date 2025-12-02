@@ -1,23 +1,22 @@
 import { useState, useEffect } from 'react';
 import { getProductos, getCategorias, createProducto, updateProducto, deleteProducto } from '../../api/services'; 
 import { useAuth } from '../../context/AuthContext'; 
-import AdminLayout from '../../components/AdminLayout'; 
+import AdminLayout from '../../components/templates/AdminLayout'; 
 import Swal from 'sweetalert2'; 
 import { 
     Paper, Typography, Box, Button, Table, TableBody, TableCell, 
     TableContainer, TableHead, TableRow, LinearProgress, 
     TextField, Select, MenuItem, FormControl, InputLabel, CircularProgress,
-    Dialog, DialogTitle, DialogContent, DialogActions, Chip, IconButton, Tooltip
+    Dialog, DialogTitle, DialogContent, DialogActions, InputAdornment
 } from '@mui/material';
 import ReplayIcon from '@mui/icons-material/Replay';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from '@mui/icons-material/Save';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import SearchIcon from '@mui/icons-material/Search';
-import InputAdornment from '@mui/material/InputAdornment';
+import StatusChip from '../../components/atoms/StatusChip';
+import ActionButton from '../../components/atoms/ActionButton';
 
 
 const API_URL_BASE = 'http://localhost:3006'; 
@@ -50,7 +49,7 @@ const Inventory = () => {
         categoriaId: '',
         fotoUrl: '', 
     });
-    const brandColor = '#d97706';
+    const brandColor = '#2e7d32';
 
     useEffect(() => { 
         cargarInventarioYCategorias();
@@ -281,7 +280,7 @@ const Inventory = () => {
                         Inventario
                     </Typography>
                     <Typography variant="body2" color="#64748b">
-                        Gestiona tus productos y existencias
+                        Gestión
                     </Typography>
                 </Box>
                 
@@ -297,11 +296,11 @@ const Inventory = () => {
                                 borderRadius: 2,
                                 px: 3,
                                 fontWeight: 'bold',
-                                boxShadow: '0 4px 12px rgba(217, 119, 6, 0.3)',
-                                '&:hover': { bgcolor: '#b45309' } 
+                                boxShadow: '0 4px 12px rgba(46, 125, 50, 0.3)',
+                                '&:hover': { bgcolor: '#1b5e20' } 
                             }}
                         >
-                            Nuevo Producto
+                            Nuevo Producto 
                         </Button>
                     )}
                     <Button 
@@ -401,10 +400,9 @@ const Inventory = () => {
                                             </TableCell>
                                             
                                             <TableCell>
-                                                <Chip 
+                                                <StatusChip 
                                                     label={row.categoria?.nombre || 'Sin Categoría'} 
-                                                    size="small" 
-                                                    sx={{ bgcolor: '#f1f5f9', color: '#475569', fontWeight: '600', borderRadius: 1 }} 
+                                                    color="default"
                                                 />
                                             </TableCell>
                                             <TableCell><Typography fontWeight="600" color="#1e293b">${row.precio?.toLocaleString('es-CL')}</Typography></TableCell>
@@ -418,9 +416,10 @@ const Inventory = () => {
                                            
                                             <TableCell>
                                                 <Box display="flex" justifyContent="space-between" mb={0.5}>
-                                                    <Typography variant="caption" color={esBajo ? '#ef4444' : '#16a34a'} fontWeight="700">
-                                                        {esBajo ? 'Bajo' : 'Óptimo'}
-                                                    </Typography>
+                                                    <StatusChip 
+                                                        label={esBajo ? 'Bajo' : 'Óptimo'} 
+                                                        color={esBajo ? 'error' : 'success'} 
+                                                    />
                                                 </Box>
                                                 <LinearProgress 
                                                     variant="determinate" 
@@ -435,24 +434,14 @@ const Inventory = () => {
                                             <TableCell align="right">
                                                 {isAdmin ? (
                                                     <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
-                                                        <Tooltip title="Editar">
-                                                            <IconButton 
-                                                                size="small" 
-                                                                onClick={() => handleOpenModal(row)} 
-                                                                sx={{ color: '#3b82f6', bgcolor: '#eff6ff', '&:hover': { bgcolor: '#dbeafe' } }}
-                                                            >
-                                                                <EditIcon fontSize="small" />
-                                                            </IconButton>
-                                                        </Tooltip>
-                                                        <Tooltip title="Eliminar">
-                                                            <IconButton 
-                                                                size="small" 
-                                                                onClick={() => handleDelete(row.id)} 
-                                                                sx={{ color: '#ef4444', bgcolor: '#fef2f2', '&:hover': { bgcolor: '#fee2e2' } }}
-                                                            >
-                                                                <DeleteIcon fontSize="small" />
-                                                            </IconButton>
-                                                        </Tooltip>
+                                                        <ActionButton 
+                                                            type="edit" 
+                                                            onClick={() => handleOpenModal(row)} 
+                                                        />
+                                                        <ActionButton 
+                                                            type="delete" 
+                                                            onClick={() => handleDelete(row.id)} 
+                                                        />
                                                     </Box>
                                                 ) : (
                                                     <Typography variant="caption" color="text.secondary">
@@ -576,8 +565,8 @@ const Inventory = () => {
                             bgcolor: brandColor, 
                             borderRadius: 2, 
                             fontWeight: 'bold', 
-                            boxShadow: '0 4px 12px rgba(217, 119, 6, 0.3)',
-                            '&:hover': { bgcolor: '#b45309' } 
+                            boxShadow: '0 4px 12px rgba(46, 125, 50, 0.3)',
+                            '&:hover': { bgcolor: '#1b5e20' } 
                         }}
                     >
                         Guardar

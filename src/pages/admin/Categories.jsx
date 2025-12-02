@@ -1,21 +1,20 @@
 import { useState, useEffect } from 'react';
 import { categoriesService } from '../../api/services'; 
-import AdminLayout from '../../components/AdminLayout'; 
+import AdminLayout from '../../components/templates/AdminLayout'; 
 import Swal from 'sweetalert2';
 import { 
     Paper, Typography, Box, TextField, Button, Table, TableBody, 
-    TableCell, TableContainer, TableHead, TableRow, IconButton,
-    Dialog, DialogTitle, DialogContent, DialogActions, Chip, Tooltip
+    TableCell, TableContainer, TableHead, TableRow,
+    Dialog, DialogTitle, DialogContent, DialogActions, Chip
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import CategoryIcon from '@mui/icons-material/Category';
 import SaveIcon from '@mui/icons-material/Save';
 import CakeIcon from '@mui/icons-material/Cake'; 
 import NoFoodIcon from '@mui/icons-material/NoFood'; 
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'; 
 import BakeryDiningIcon from '@mui/icons-material/BakeryDining'; 
+import CategoryIcon from '@mui/icons-material/Category';
+import ActionButton from '../../components/atoms/ActionButton'; 
 
 const CATEGORY_ICONS = {
     'Tortas Cuadradas': CakeIcon,
@@ -40,7 +39,7 @@ const Categories = () => {
     const [open, setOpen] = useState(false);
     const [form, setForm] = useState({ id: null, nombre: '', descripcion: '' }); 
     
-    const primaryColor = '#d97706'; 
+    const primaryColor = '#2e7d32'; 
     const errorColor = '#ef4444'; 
     const successColor = '#10b981'; 
 
@@ -176,8 +175,8 @@ const Categories = () => {
                         textTransform: 'none', 
                         borderRadius: 2, 
                         px: 3,
-                        boxShadow: '0 4px 12px rgba(217, 119, 6, 0.3)',
-                        '&:hover': { bgcolor: '#b45309' } 
+                        boxShadow: '0 4px 12px rgba(46, 125, 50, 0.3)',
+                        '&:hover': { bgcolor: '#1b5e20' } 
                     }}
                     onClick={() => handleOpen()}
                 >
@@ -208,10 +207,10 @@ const Categories = () => {
                                                 size="medium"
                                                 sx={{ 
                                                     fontWeight: '600',
-                                                    bgcolor: '#fff7ed', 
-                                                    color: '#9a3412',
+                                                    bgcolor: '#e8f5e9', 
+                                                    color: '#1b5e20',
                                                     borderRadius: 2,
-                                                    '& .MuiChip-icon': { color: '#ea580c' } 
+                                                    '& .MuiChip-icon': { color: '#2e7d32' } 
                                                 }}
                                             />
                                         </Box>
@@ -219,24 +218,14 @@ const Categories = () => {
                                     <TableCell sx={{ color: '#64748b' }}>{cat.descripcion || 'Sin descripción'}</TableCell>
                                     <TableCell align="right">
                                         <Box sx={{ whiteSpace: 'nowrap', display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-                                            <Tooltip title="Editar">
-                                                <IconButton 
-                                                    size="small" 
-                                                    onClick={() => handleOpen(cat)} 
-                                                    sx={{ color: '#3b82f6', bgcolor: '#eff6ff', '&:hover': { bgcolor: '#dbeafe' } }}
-                                                >
-                                                    <EditIcon fontSize="small" />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title="Eliminar">
-                                                <IconButton 
-                                                    size="small" 
-                                                    onClick={() => handleDelete(cat.id)} 
-                                                    sx={{ color: errorColor, bgcolor: '#fef2f2', '&:hover': { bgcolor: '#fee2e2' } }}
-                                                >
-                                                    <DeleteIcon fontSize="small" />
-                                                </IconButton>
-                                            </Tooltip>
+                                            <ActionButton 
+                                                type="edit" 
+                                                onClick={() => handleOpen(cat)} 
+                                            />
+                                            <ActionButton 
+                                                type="delete" 
+                                                onClick={() => handleDelete(cat.id)} 
+                                            />
                                         </Box>
                                     </TableCell>
                                 </TableRow>
@@ -296,8 +285,8 @@ const Categories = () => {
                             bgcolor: primaryColor, 
                             borderRadius: 2, 
                             fontWeight: 'bold',
-                            boxShadow: '0 4px 12px rgba(217, 119, 6, 0.3)',
-                            '&:hover': { bgcolor: '#b45309' } 
+                            boxShadow: '0 4px 12px rgba(46, 125, 50, 0.3)',
+                            '&:hover': { bgcolor: '#1b5e20' } 
                         }}
                     >
                         Guardar

@@ -6,7 +6,6 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-// Mock dependencies
 vi.mock('../../api/services', () => ({
     productsService: {
         getAll: vi.fn(),
@@ -27,11 +26,10 @@ vi.mock('sweetalert2', () => ({
     },
 }));
 
-vi.mock('../../components/AdminLayout', () => ({
+vi.mock('../../components/templates/AdminLayout', () => ({
     default: ({ children }) => <div data-testid="admin-layout">{children}</div>,
 }));
 
-// Mock Icons
 vi.mock('@mui/icons-material/TrendingUp', () => ({ default: () => <span data-testid="TrendingUpIcon">TrendingUp</span> }));
 vi.mock('@mui/icons-material/ShoppingBag', () => ({ default: () => <span data-testid="ShoppingBagIcon">ShoppingBag</span> }));
 vi.mock('@mui/icons-material/Warning', () => ({ default: () => <span data-testid="WarningIcon">Warning</span> }));

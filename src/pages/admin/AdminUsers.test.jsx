@@ -4,7 +4,7 @@ import AdminUsers from './AdminUsers';
 import { usersService } from '../../api/services';
 import Swal from 'sweetalert2';
 
-// Mock dependencies
+
 vi.mock('../../api/services', () => ({
     usersService: {
         findAll: vi.fn(),
@@ -12,7 +12,7 @@ vi.mock('../../api/services', () => ({
     },
 }));
 
-vi.mock('../../components/AdminLayout', () => ({
+vi.mock('../../components/templates/AdminLayout', () => ({
     default: ({ children }) => <div data-testid="admin-layout">{children}</div>,
 }));
 
@@ -22,7 +22,7 @@ vi.mock('sweetalert2', () => ({
     },
 }));
 
-// Mock icons
+
 vi.mock('@mui/icons-material/PersonAdd', () => ({ default: () => <span data-testid="PersonAddIcon">PersonAdd</span> }));
 vi.mock('@mui/icons-material/Badge', () => ({ default: () => <span data-testid="BadgeIcon">Badge</span> }));
 vi.mock('@mui/icons-material/Lock', () => ({ default: () => <span data-testid="LockIcon">Lock</span> }));
@@ -73,7 +73,7 @@ describe('AdminUsers', () => {
 
         render(<AdminUsers />);
 
-        // Wait for initial load
+        
         await waitFor(() => {
             expect(usersService.findAll).toHaveBeenCalled();
         });
@@ -81,8 +81,7 @@ describe('AdminUsers', () => {
         fireEvent.change(screen.getByLabelText(/Nombre Completo/i), { target: { value: 'New User' } });
         fireEvent.change(screen.getByLabelText(/RUT/i), { target: { value: '11111111-1' } });
         fireEvent.change(screen.getByLabelText(/Contraseña/i), { target: { value: 'password123' } });
-        
-        // Select role using getByRole 'combobox' which targets the Select input
+    
         const roleSelect = screen.getByRole('combobox');
         fireEvent.mouseDown(roleSelect);
         
@@ -101,7 +100,7 @@ describe('AdminUsers', () => {
                 rol: 'admin'
             });
             expect(Swal.fire).toHaveBeenCalledWith('Éxito', 'Usuario creado correctamente', 'success');
-            expect(usersService.findAll).toHaveBeenCalledTimes(2); // Initial load + after create
+            expect(usersService.findAll).toHaveBeenCalledTimes(2); 
         });
     });
 
@@ -111,7 +110,6 @@ describe('AdminUsers', () => {
 
         render(<AdminUsers />);
 
-        // Wait for initial load
         await waitFor(() => {
             expect(usersService.findAll).toHaveBeenCalled();
         });
