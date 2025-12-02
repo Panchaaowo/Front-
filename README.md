@@ -1,92 +1,40 @@
-# ?? Mundo Mascota - Sistema de Gestión y Punto de Venta
+# ğŸš€ Mundo Mascota - Sistema de GestiÃ³n y Punto de Venta (POS)
 
-Este proyecto es una aplicación web completa para la gestión de una tienda de mascotas ('Pet Shop'). Incluye un sistema de Punto de Venta (POS), gestión de inventario, administración de usuarios, reportes financieros y un panel de control administrativo.
+Este proyecto es una aplicaciÃ³n web completa, diseÃ±ada para la gestiÃ³n integral de una tienda de mascotas (*Pet Shop*). Incluye un robusto sistema de **Punto de Venta (POS)**, gestiÃ³n detallada de inventario, administraciÃ³n de personal y usuarios, y un completo *dashboard* para reportes y mÃ©tricas financieras, garantizando la optimizaciÃ³n de las operaciones diarias.
 
-El frontend está construido con **React** y **Material UI**, siguiendo una arquitectura de **Atomic Design** para garantizar la escalabilidad y mantenibilidad del código.
+El **frontend** estÃ¡ construido con **React** y **Material UI**, siguiendo una arquitectura de **Atomic Design** para garantizar la escalabilidad y mantenibilidad del cÃ³digo.
 
-## ?? Características Principales
+## ğŸ”‘ Credenciales de Acceso para Pruebas
 
-### ?? Punto de Venta (POS)
-- **Catálogo de Productos:** Visualización de productos con filtrado por categorías y búsqueda en tiempo real.
-- **Carrito de Compras:** Gestión dinámica del carrito (agregar, eliminar, modificar cantidades).
-- **Proceso de Pago:** Soporte para múltiples medios de pago (Efectivo, Débito, Crédito).
-- **Generación de Boletas:** Vista previa y simulación de impresión de boletas electrónicas.
-- **Cierre de Caja:** Funcionalidad para vendedores y administradores para realizar el cuadre diario de efectivo.
+Para ingresar y probar las funcionalidades con diferentes niveles de acceso:
 
-### ??? Panel de Administración
-- **Dashboard Ejecutivo:** Métricas en tiempo real (Ventas del día, Alertas de stock, Productos top).
-- **Gestión de Inventario:** CRUD completo de productos con validaciones.
-- **Gestión de Categorías:** Organización de productos.
-- **Gestión de Usuarios:** Administración de roles (Admin/Vendedor) y accesos.
-- **Historial de Ventas:** Registro detallado de transacciones con filtros por fecha y vendedor.
-
-### ?? Seguridad y Arquitectura
-- **Autenticación JWT:** Manejo seguro de sesiones con tokens y refresh automático.
-- **Rutas Protegidas:** Control de acceso basado en roles.
-- **Atomic Design:** Estructura de componentes organizada en Átomos, Moléculas, Organismos y Templates.
-- **Testing:** Cobertura de pruebas unitarias con Vitest y React Testing Library.
-
-## ??? Tecnologías Utilizadas
-
-- **Core:** [React 19](https://react.dev/), [Vite](https://vitejs.dev/)
-- **UI Framework:** [Material UI (MUI) v6](https://mui.com/)
-- **Enrutamiento:** [React Router v6](https://reactrouter.com/)
-- **Estado & API:** Context API, [Axios](https://axios-http.com/)
-- **Alertas:** [SweetAlert2](https://sweetalert2.github.io/)
-- **Testing:** [Vitest](https://vitest.dev/), [React Testing Library](https://testing-library.com/)
-
-## ?? Estructura del Proyecto (Atomic Design)
-
-El proyecto sigue una estructura modular:
-
-`src/
-+-- api/            # Configuración de Axios y servicios
-+-- components/     # Componentes UI
-¦   +-- atoms/      # Botones, Chips, Inputs básicos
-¦   +-- molecules/  # Tarjetas de estadísticas, Items de lista
-¦   +-- organisms/  # Sidebar, Tablas complejas, Formularios
-¦   +-- templates/  # Layouts de página (AdminLayout)
-+-- context/        # AuthContext, CartContext
-+-- pages/          # Vistas principales (Login, Home, Inventory, etc.)
-+-- theme/          # Configuración de tema MUI
-` 
-
-## ?? Instalación y Ejecución
-
-1.  **Clonar el repositorio:**
-    `ash
-    git clone https://github.com/tu-usuario/mundo-mascota-frontend.git
-    cd mundo-mascota-frontend
-    ` 
-
-2.  **Instalar dependencias:**
-    `ash
-    npm install
-    ` 
-
-3.  **Ejecutar en desarrollo:**
-    `ash
-    npm run dev
-    ` 
-    La aplicación estará disponible en http://localhost:5173.
-
-4.  **Ejecutar Pruebas:**
-    `ash
-    npm test
-    ` 
-
-## ?? Estado de las Pruebas
-
-El proyecto cuenta con una suite de pruebas robusta que verifica la integridad de los componentes y la lógica de negocio.
-
-- **Cobertura:** Componentes atómicos, navegación, protección de rutas y lógica de renderizado.
-- **Ejecución:** 
-pm test corre todos los tests en modo watch.
-
-## ?? Notas Adicionales
-
-- El sistema está diseñado para conectarse a una API RESTful en el backend (configurada en src/api/axiosConfig.js).
-- Asegúrese de tener el backend en ejecución para la funcionalidad completa (Login, CRUD).
+| Rol | Usuario (Rut/ID) | ContraseÃ±a |
+| :--- | :--- | :--- |
+| **Administrador** | 1-9 | admin123 |
+| **Vendedor** | 2-7 | vendedor123 |
 
 ---
-Desarrollado por [Tu Nombre] - 2025
+
+## ğŸŒŸ CaracterÃ­sticas Principales
+
+### ğŸ›’ Punto de Venta (POS)
+- **CatÃ¡logo de Productos:** VisualizaciÃ³n rÃ¡pida de productos con filtrado por categorÃ­as y bÃºsqueda en tiempo real.
+- **Carrito de Compras:** GestiÃ³n dinÃ¡mica del carrito (agregar, eliminar, modificar cantidades) con cÃ¡lculo de totales instantÃ¡neo.
+- **Proceso de Pago:** Soporte flexible para **mÃºltiples medios de pago** (Efectivo, DÃ©bito, CrÃ©dito).
+- **GeneraciÃ³n de Boletas:** Vista previa y simulaciÃ³n de impresiÃ³n de boletas electrÃ³nicas.
+- **Cierre de Caja:** Funcionalidad crÃ­tica para vendedores y administradores para realizar el **cuadre diario** de efectivo.
+
+### ğŸ“Š Panel de AdministraciÃ³n
+- **Dashboard Ejecutivo:** MÃ©tricas en tiempo real de alto valor (*Ventas del dÃ­a*, *Alertas de stock*, *Productos top*).
+- **GestiÃ³n de Inventario:** **CRUD** (Crear, Leer, Actualizar, Eliminar) completo de productos con validaciones robustas.
+- **GestiÃ³n de CategorÃ­as:** Herramientas para la organizaciÃ³n lÃ³gica y jerÃ¡rquica de los productos.
+- **GestiÃ³n de Usuarios:** AdministraciÃ³n de roles (**Admin** / **Vendedor**) y control de accesos por permisos.
+- **Historial de Ventas:** Registro detallado de transacciones con filtros avanzados por fecha y vendedor.
+
+### ğŸ”’ Seguridad y Arquitectura
+- **AutenticaciÃ³n JWT:** Manejo seguro de sesiones con *tokens* JWT y *refresh* automÃ¡tico.
+- **Rutas Protegidas:** Control de acceso estricto basado en roles para asegurar la integridad del sistema.
+- **Atomic Design:** Estructura de componentes organizada en Ãtomos, MolÃ©culas, Organismos y *Templates* para la modularidad del cÃ³digo.
+- **Testing:** Cobertura de pruebas unitarias implementada con **Vitest** y **React Testing Library** para asegurar la calidad y el comportamiento correcto de los componentes.
+
+
