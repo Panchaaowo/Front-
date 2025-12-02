@@ -1,4 +1,4 @@
-# 🚀 Mundo Mascota - Sistema de Gestión y Punto de Venta (POS)
+# 🚀 Mundo Mascota - Sistema de Gestión y Punto de Venta 
 
 Este proyecto es una aplicación web completa, diseñada para la gestión integral de una tienda de mascotas (*Pet Shop*). Incluye un robusto sistema de **Punto de Venta (POS)**, gestión detallada de inventario, administración de personal y usuarios, y un completo *dashboard* para reportes y métricas financieras, garantizando la optimización de las operaciones diarias.
 
