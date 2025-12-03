@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Paper, Avatar } from '@mui/material';
-import CakeIcon from '@mui/icons-material/Cake';
+import PetsIcon from '@mui/icons-material/Pets';
 
 const DetalleBoleta = ({ item, subtotal }) => {
     return (
@@ -33,7 +33,7 @@ const DetalleBoleta = ({ item, subtotal }) => {
                     borderRadius: 2
                 }}
             >
-                <CakeIcon />
+                <PetsIcon />
             </Avatar>
 
            

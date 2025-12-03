@@ -37,8 +37,10 @@ const getPaymentColor = (medioPago) => {
         case 'EFECTIVO':
             return 'success';
         case 'DEBITO':
+        case 'DÉBITO':
             return 'info';
         case 'CREDITO':
+        case 'CRÉDITO':
             return 'warning';
         default:
             return 'default';

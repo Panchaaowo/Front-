@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from '@mui/icons-material/Save';
-import CakeIcon from '@mui/icons-material/Cake'; 
+import PetsIcon from '@mui/icons-material/Pets'; 
 import NoFoodIcon from '@mui/icons-material/NoFood'; 
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'; 
 import BakeryDiningIcon from '@mui/icons-material/BakeryDining'; 
@@ -17,8 +17,8 @@ import CategoryIcon from '@mui/icons-material/Category';
 import ActionButton from '../../components/atoms/ActionButton'; 
 
 const CATEGORY_ICONS = {
-    'Tortas Cuadradas': CakeIcon,
-    'Tortas Circulares': CakeIcon,
+    'Tortas Cuadradas': PetsIcon,
+    'Tortas Circulares': PetsIcon,
     'Postres Individuales': BakeryDiningIcon,
     'Sin Azúcar': NoFoodIcon,
     'Tradicional': BakeryDiningIcon,

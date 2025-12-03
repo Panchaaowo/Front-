@@ -31,7 +31,7 @@ vi.mock('@mui/icons-material/Edit', () => ({ default: () => <span data-testid="E
 vi.mock('@mui/icons-material/Delete', () => ({ default: () => <span data-testid="DeleteIcon">Delete</span> }));
 vi.mock('@mui/icons-material/Category', () => ({ default: () => <span data-testid="CategoryIcon">Category</span> }));
 vi.mock('@mui/icons-material/Save', () => ({ default: () => <span data-testid="SaveIcon">Save</span> }));
-vi.mock('@mui/icons-material/Cake', () => ({ default: () => <span data-testid="CakeIcon">Cake</span> }));
+vi.mock('@mui/icons-material/Pets', () => ({ default: () => <span data-testid="PetsIcon">Pets</span> }));
 vi.mock('@mui/icons-material/NoFood', () => ({ default: () => <span data-testid="NoFoodIcon">NoFood</span> }));
 vi.mock('@mui/icons-material/EmojiEvents', () => ({ default: () => <span data-testid="EmojiEventsIcon">EmojiEvents</span> }));
 vi.mock('@mui/icons-material/BakeryDining', () => ({ default: () => <span data-testid="BakeryDiningIcon">BakeryDining</span> }));

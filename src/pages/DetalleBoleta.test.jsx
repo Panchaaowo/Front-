@@ -3,8 +3,8 @@ import { describe, it, expect, vi } from 'vitest';
 import DetalleBoleta from './DetalleBoleta';
 
 // Mock Icon
-vi.mock('@mui/icons-material/Cake', () => ({
-    default: () => <span data-testid="CakeIcon">CakeIcon</span>
+vi.mock('@mui/icons-material/Pets', () => ({
+    default: () => <span data-testid="PetsIcon">PetsIcon</span>
 }));
 
 describe('DetalleBoleta Component', () => {
@@ -32,7 +32,7 @@ describe('DetalleBoleta Component', () => {
 
     it('renders the icon', () => {
         render(<DetalleBoleta item={mockItem} subtotal={mockSubtotal} />);
-        expect(screen.getByTestId('CakeIcon')).toBeInTheDocument();
+        expect(screen.getByTestId('PetsIcon')).toBeInTheDocument();
     });
 
     it('handles large numbers formatting', () => {

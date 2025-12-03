@@ -26,8 +26,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const PAYMENT_OPTIONS = [
     { id: 'EFECTIVO', label: 'Efectivo', icon: <MoneyIcon fontSize="large" />, color: '#2e7d32' },
-    { id: 'DEBITO', label: 'Débito', icon: <CreditCardIcon fontSize="large" />, color: '#10b981' },
-    { id: 'CREDITO', label: 'Crédito', icon: <CreditCardIcon fontSize="large" />, color: '#3b82f6' },
+    { id: 'DEBITO', label: 'Débito', icon: <CreditCardIcon fontSize="large" />, color: '#3b82f6' },
+    { id: 'CREDITO', label: 'Crédito', icon: <CreditCardIcon fontSize="large" />, color: '#f59e0b' },
 ];
 
 const Boleta = () => {
@@ -242,6 +242,8 @@ const Boleta = () => {
                     #printable-receipt {
                         position: absolute;
                         left: 0;
+                        right: 0;
+                        margin: 0 auto;
                         top: 0;
                         width: 80mm; /* Ancho estándar de boleta térmica */
                         display: block !important;

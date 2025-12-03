@@ -170,7 +170,11 @@ const TransactionsList = ({ transactions, allProducts, isAdmin }) => {
                                     <Chip 
                                         label={t.medioPago || 'Efectivo'} 
                                         size="small" 
-                                        color={t.medioPago === 'EFECTIVO' ? 'success' : (t.medioPago === 'CRÉDITO' ? 'warning' : 'primary')}
+                                        color={
+                                            t.medioPago === 'EFECTIVO' ? 'success' : 
+                                            (t.medioPago === 'CRÉDITO' || t.medioPago === 'CREDITO' ? 'warning' : 
+                                            (t.medioPago === 'DEBITO' || t.medioPago === 'DÉBITO' ? 'info' : 'primary'))
+                                        }
                                     />
                                 </TableCell>
                                 <TableCell>
