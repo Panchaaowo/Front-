@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { salesService, usersService } from "../../api/services";
+import { salesService, usersService, productsService } from "../../api/services";
 import AdminLayout from '../../components/templates/AdminLayout';
 import Swal from 'sweetalert2';
 import { 
@@ -7,7 +7,7 @@ import {
     TableContainer, TableHead, TableRow, Select, MenuItem, FormControl, 
     InputLabel, CircularProgress, Dialog, DialogTitle, 
     DialogContent, DialogActions, TextField, Button, Alert,
-    Stack, Card, CardContent, Grid, InputAdornment
+    Stack, Card, CardContent, Grid, InputAdornment, IconButton
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import SearchIcon from '@mui/icons-material/Search';
@@ -47,6 +47,156 @@ const getPaymentColor = (medioPago) => {
     }
 };
 
+
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import CloseIcon from '@mui/icons-material/Close';
+import PrintIcon from '@mui/icons-material/Print';
+import Divider from '@mui/material/Divider';
+
+const ReceiptModal = ({ open, handleClose, sale }) => {
+    if (!sale) return null;
+
+    const total = sale.resumen?.total || 0;
+    const valorNeto = Math.round(total / 1.19);
+    const valorIva = total - valorNeto;
+    const items = sale.items || [];
+    const fecha = new Date(sale.fecha);
+
+    const handlePrint = () => {
+        const printContent = document.getElementById('receipt-content');
+        const windowUrl = 'about:blank';
+        const uniqueName = new Date();
+        const windowName = 'Print' + uniqueName.getTime();
+        const printWindow = window.open(windowUrl, windowName, 'left=50000,top=50000,width=0,height=0');
+
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Imprimir Boleta</title>
+                    <style>
+                        body { font-family: 'Courier New', Courier, monospace; padding: 20px; }
+                        .text-center { text-align: center; }
+                        .text-right { text-align: right; }
+                        .font-bold { font-weight: bold; }
+                        .text-sm { font-size: 12px; }
+                        .text-xs { font-size: 10px; }
+                        .my-2 { margin-top: 8px; margin-bottom: 8px; }
+                        .mb-1 { margin-bottom: 4px; }
+                        .border-dashed { border-bottom: 1px dashed #000; }
+                        .flex { display: flex; justify-content: space-between; }
+                        .uppercase { text-transform: uppercase; }
+                    </style>
+                </head>
+                <body>
+                    ${printContent.innerHTML}
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+        }, 250);
+    };
+
+    return (
+        <Dialog 
+            open={open} 
+            onClose={handleClose} 
+            maxWidth="xs" 
+            fullWidth
+            PaperProps={{ sx: { borderRadius: 2 } }}
+        >
+            <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
+                <Typography fontWeight="bold">Detalle de Boleta</Typography>
+                <IconButton onClick={handleClose} size="small"><CloseIcon /></IconButton>
+            </DialogTitle>
+            
+            <DialogContent sx={{ p: 0, bgcolor: '#f9f9f9' }}>
+                <Box id="receipt-content" sx={{ p: 3, bgcolor: 'white', fontFamily: '"Courier New", Courier, monospace' }}>
+                    <Box textAlign="center" mb={2}>
+                        <Typography variant="h6" fontWeight="bold" sx={{ letterSpacing: 2 }}>MUNDO MASCOTA</Typography>
+                        <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>PET SHOP</Typography>
+                        <Typography variant="caption" display="block">R.U.T.: 76.543.210-K</Typography>
+                        <Typography variant="caption" display="block">GIRO: Venta de Mascotas</Typography>
+                        <Typography variant="caption" display="block">CASA MATRIZ: AV. Matta 4234</Typography>
+                        <Typography variant="caption" display="block">SANTIAGO, CHILE</Typography>
+                        <Typography variant="caption" display="block">FONO: +56 9 1234 5678</Typography>
+                    </Box>
+
+                    <Divider sx={{ borderStyle: 'dashed', borderColor: '#000', my: 1 }} />
+
+                    <Box textAlign="center" mb={1}>
+                        <Typography variant="body2" fontWeight="bold">BOLETA ELECTRÓNICA N° {sale.folio}</Typography>
+                        <Typography variant="caption">S.I.I. - SANTIAGO CENTRO</Typography>
+                    </Box>
+
+                    <Box display="flex" justifyContent="space-between" mb={0.5}>
+                        <Typography variant="caption">FECHA: {fecha.toLocaleDateString()}</Typography>
+                        <Typography variant="caption">HORA: {fecha.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</Typography>
+                    </Box>
+                    <Box display="flex" justifyContent="space-between" mb={1}>
+                        <Typography variant="caption">VENDEDOR: {(sale.vendedor || 'Cajero').toUpperCase()}</Typography>
+                        <Typography variant="caption">CAJA: 1</Typography>
+                    </Box>
+
+                    <Divider sx={{ borderStyle: 'dashed', borderColor: '#000', my: 1 }} />
+
+                    <Box mb={2}>
+                        {items.map((item, index) => (
+                            <Box key={index} mb={1}>
+                                <Box display="flex" justifyContent="space-between">
+                                    <Typography variant="body2" fontWeight="bold" sx={{ flex: 1, mr: 1 }}>
+                                        {item.nombre}
+                                    </Typography>
+                                    <Typography variant="body2" fontWeight="bold">
+                                        ${((item.precio) * (item.cantidad)).toLocaleString('es-CL')}
+                                    </Typography>
+                                </Box>
+                                <Typography variant="caption" color="text.secondary">
+                                    {item.cantidad} x ${(item.precio).toLocaleString('es-CL')}
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Box>
+
+                    <Divider sx={{ borderStyle: 'dashed', borderColor: '#000', my: 1 }} />
+
+                    <Box>
+                        <Box display="flex" justifyContent="space-between">
+                            <Typography variant="body2">MONTO NETO</Typography>
+                            <Typography variant="body2">${valorNeto.toLocaleString('es-CL')}</Typography>
+                        </Box>
+                        <Box display="flex" justifyContent="space-between">
+                            <Typography variant="body2">I.V.A. (19%)</Typography>
+                            <Typography variant="body2">${valorIva.toLocaleString('es-CL')}</Typography>
+                        </Box>
+                        <Box display="flex" justifyContent="space-between" mt={1}>
+                            <Typography variant="h6" fontWeight="bold">TOTAL</Typography>
+                            <Typography variant="h6" fontWeight="bold">${total.toLocaleString('es-CL')}</Typography>
+                        </Box>
+                        <Box display="flex" justifyContent="space-between" mt={1}>
+                            <Typography variant="caption">MEDIO PAGO</Typography>
+                            <Typography variant="caption" fontWeight="bold">{sale.resumen?.medioPago}</Typography>
+                        </Box>
+                    </Box>
+
+                    <Box textAlign="center" mt={3}>
+                        <Typography variant="body2" fontWeight="bold">¡GRACIAS POR SU COMPRA!</Typography>
+                        <Typography variant="caption">VISÍTENOS EN WWW.MundoMascota.CL</Typography>
+                    </Box>
+                </Box>
+            </DialogContent>
+            
+            <DialogActions sx={{ p: 2, bgcolor: '#f5f5f5' }}>
+                <Button onClick={handlePrint} startIcon={<PrintIcon />} variant="contained" fullWidth sx={{ bgcolor: '#2e7d32' }}>
+                    Imprimir Boleta
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+};
 
 const EditSaleModal = ({ open, handleClose, saleData, handleSave }) => {
     const [form, setForm] = useState({});
@@ -159,6 +309,7 @@ const EditSaleModal = ({ open, handleClose, saleData, handleSave }) => {
 const AdminSalesHistory = () => {
     const [sales, setSales] = useState([]);
     const [users, setUsers] = useState([]);
+    const [allProducts, setAllProducts] = useState([]);
     const [selectedUserId, setSelectedUserId] = useState('');
     // Corregido: Usar fecha local en lugar de UTC para evitar que salte al día siguiente por diferencia horaria
     const [selectedDate, setSelectedDate] = useState(() => {
@@ -169,24 +320,28 @@ const AdminSalesHistory = () => {
 
     const [selectedSale, setSelectedSale] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isReceiptOpen, setIsReceiptOpen] = useState(false);
+    const [receiptSale, setReceiptSale] = useState(null);
 
     useEffect(() => {
-        fetchUsers();
+        const loadCatalogs = async () => {
+            try {
+                const [usersRes, productsRes] = await Promise.all([
+                    usersService.findAll(),
+                    productsService.getAll()
+                ]);
+                setUsers(usersRes.data.filter(u => u.rol !== 'cliente'));
+                setAllProducts(productsRes.data || []);
+            } catch (error) {
+                console.error("Error loading catalogs", error);
+            }
+        };
+        loadCatalogs();
     }, []);
 
     useEffect(() => {
         fetchSalesHistory(selectedUserId, selectedDate);
-    }, [selectedUserId, selectedDate]);
-
-    const fetchUsers = async () => {
-        try {
-            const res = await usersService.findAll(); 
-            const sellers = res.data.filter(u => u.rol !== 'cliente');
-            setUsers(sellers);
-        } catch (error) {
-            console.error("Error al cargar la lista de usuarios para el filtro:", error.response);
-        }
-    };
+    }, [selectedUserId, selectedDate, allProducts]);
 
     const clearFilters = () => {
         setSelectedUserId('');
@@ -231,12 +386,68 @@ const AdminSalesHistory = () => {
 
                  const total = Number(sale.total || sale.resumen?.total || 0);
                  const medioPago = sale.medioPago || sale.resumen?.medioPago || 'EFECTIVO';
+                 
+                 // Asegurar que los items vengan correctamente y enriquecer con datos del catálogo si faltan
+                 const rawItems = sale.items || sale.detalles || sale.productos || [];
+                 const items = rawItems.map(i => {
+                     // 1. Intentar obtener nombre directo
+                     let nombre = i.nombre || i.producto?.nombre || i.producto?.name;
+                     
+                     // 2. Intentar obtener precio y cantidad
+                     let precio = i.precio || i.precioUnitario || i.producto?.precio;
+                     let cantidad = Number(i.cantidad || 1);
+                     
+                     // Si viene subtotal y falta precio, lo calculamos
+                     if (!precio && i.subtotal) {
+                         precio = i.subtotal / cantidad;
+                     }
+
+                     // 3. Si falta el nombre, buscamos en el catálogo
+                     if (!nombre) {
+                         let pId = i.productoId || i.producto_id || i.productId || i.ProductId || i.id;
+                         
+                         // Si no hay ID plano, miramos dentro de 'producto'
+                         if (!pId && i.producto) {
+                             if (typeof i.producto === 'object') {
+                                 pId = i.producto.id || i.producto._id;
+                             } else {
+                                 // Si es primitivo, asumimos que es el ID (o el nombre si no es numérico)
+                                 pId = i.producto;
+                             }
+                         }
+
+                         // Búsqueda robusta en el catálogo (comparando como strings y revisando _id)
+                         if (pId && allProducts.length > 0) {
+                             const productCatalog = allProducts.find(p => 
+                                 String(p.id) === String(pId) || 
+                                 String(p._id) === String(pId)
+                             );
+                             
+                             if (productCatalog) {
+                                 nombre = productCatalog.nombre;
+                                 if (!precio) precio = productCatalog.precio;
+                             }
+                         }
+                         
+                         // 4. Fallback: Si no se encontró en catálogo, pero pId parece ser un nombre (texto largo no numérico)
+                         if (!nombre && pId && typeof pId === 'string' && isNaN(Number(pId)) && pId.length > 2) {
+                             nombre = pId;
+                         }
+                     }
+                     
+                     return {
+                         nombre: nombre || 'Producto Desconocido',
+                         cantidad: cantidad,
+                         precio: Number(precio || 0)
+                     };
+                 });
 
                  return {
                     folio: sale.folio || sale.id,
                     fecha: sale.fecha || sale.createdAt, 
                     vendedor: vendedorName,
                     vendedorId: vendedorId, 
+                    items: items, 
                     resumen: { medioPago, total } 
                  };
             });
@@ -287,6 +498,11 @@ const AdminSalesHistory = () => {
     };
     
    
+
+    const handleViewReceipt = (sale) => {
+        setReceiptSale(sale);
+        setIsReceiptOpen(true);
+    };
 
     const handleEdit = (sale) => {
         setSelectedSale(sale);
@@ -468,6 +684,12 @@ const AdminSalesHistory = () => {
                                         <TableCell align="center">
                                             <Stack direction="row" spacing={1} justifyContent="center">
                                                 <ActionButton 
+                                                    type="view" 
+                                                    icon={<ReceiptLongIcon fontSize="small" />}
+                                                    onClick={() => handleViewReceipt(sale)} 
+                                                    tooltip="Ver Boleta"
+                                                />
+                                                <ActionButton 
                                                     type="edit" 
                                                     onClick={() => handleEdit(sale)} 
                                                     tooltip="Editar Venta"
@@ -509,6 +731,12 @@ const AdminSalesHistory = () => {
                     handleSave={handleSave}
                 />
             )}
+
+            <ReceiptModal 
+                open={isReceiptOpen} 
+                handleClose={() => setIsReceiptOpen(false)} 
+                sale={receiptSale} 
+            />
         </AdminLayout>
     );
 };

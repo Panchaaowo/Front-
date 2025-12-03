@@ -100,7 +100,7 @@ const Inventory = () => {
                 descripcion: product.descripcion || '',
                 precio: product.precio || 0, 
                 stock: product.stock || 0,
-                categoriaId: product.categoriaId || '', 
+                categoriaId: product.categoriaId || product.categoria?.id || '', 
                 fotoUrl: product.fotoUrl || product.fotourl || '', 
             });
         } else {

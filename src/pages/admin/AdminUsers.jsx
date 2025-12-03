@@ -9,11 +9,13 @@ import {
     InputAdornment, Card, CardContent, Divider, Stack
 } from '@mui/material';
 import StatusChip from '../../components/atoms/StatusChip';
+import ActionButton from '../../components/atoms/ActionButton';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import BadgeIcon from '@mui/icons-material/Badge';
 import LockIcon from '@mui/icons-material/Lock';
 import SecurityIcon from '@mui/icons-material/Security';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import EditIcon from '@mui/icons-material/Edit';
 
 
 const themeColors = {
@@ -31,6 +33,7 @@ const themeColors = {
 const AdminUsers = () => {
     const [users, setUsers] = useState([]);
     const [form, setForm] = useState({ name: '', rut: '', password: '', rol: 'vendedor' });
+    const [editingId, setEditingId] = useState(null);
 
     useEffect(() => { loadUsers(); }, []);
 
@@ -41,16 +44,61 @@ const AdminUsers = () => {
         } catch (error) { console.error(error); }
     };
 
-    const handleCreate = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await usersService.create(form);
-            Swal.fire('Éxito', 'Usuario creado correctamente', 'success');
-            setForm({ name: '', rut: '', password: '', rol: 'vendedor' });
+            if (editingId) {
+                const dataToUpdate = { ...form };
+                if (!dataToUpdate.password) delete dataToUpdate.password; 
+                
+                await usersService.update(editingId, dataToUpdate);
+                Swal.fire('Actualizado', 'Usuario actualizado correctamente', 'success');
+            } else {
+                await usersService.create(form);
+                Swal.fire('Éxito', 'Usuario creado correctamente', 'success');
+            }
+            resetForm();
             loadUsers();
         } catch (error) {
-            Swal.fire('Error', 'El RUT ya existe o faltan datos', 'error');
+            Swal.fire('Error', 'Error al guardar el usuario. Verifique los datos.', 'error');
         }
+    };
+
+    const handleEdit = (user) => {
+        setForm({
+            name: user.name,
+            rut: user.rut,
+            password: '', 
+            rol: user.rol
+        });
+        setEditingId(user.id);
+    };
+
+    const handleDelete = async (id) => {
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: "No podrás revertir esta acción",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Sí, eliminar'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                await usersService.delete(id);
+                Swal.fire('Eliminado', 'El usuario ha sido eliminado.', 'success');
+                loadUsers();
+            } catch (error) {
+                Swal.fire('Error', 'No se pudo eliminar el usuario.', 'error');
+            }
+        }
+    };
+
+    const resetForm = () => {
+        setForm({ name: '', rut: '', password: '', rol: 'vendedor' });
+        setEditingId(null);
     };
 
     return (
@@ -78,21 +126,21 @@ const AdminUsers = () => {
                         <Box 
                             sx={{ 
                                 p: 2, 
-                                bgcolor: themeColors.background, 
+                                bgcolor: editingId ? '#fff7ed' : themeColors.background, 
                                 borderBottom: `1px solid ${themeColors.border}`,
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: 1
                             }}
                         >
-                            <PersonAddIcon sx={{ color: themeColors.primary }} />
-                            <Typography variant="h6" fontWeight="bold" color={themeColors.text}>
-                                Nuevo Empleado
+                            {editingId ? <EditIcon sx={{ color: '#ea580c' }} /> : <PersonAddIcon sx={{ color: themeColors.primary }} />}
+                            <Typography variant="h6" fontWeight="bold" color={editingId ? '#ea580c' : themeColors.text}>
+                                {editingId ? 'Editar Empleado' : 'Nuevo Empleado'}
                             </Typography>
                         </Box>
                         
                         <CardContent sx={{ p: 3 }}>
-                            <form onSubmit={handleCreate}>
+                            <form onSubmit={handleSubmit}>
                                 <Stack spacing={2}>
                                     <TextField 
                                         fullWidth 
@@ -127,12 +175,12 @@ const AdminUsers = () => {
                                     />
                                     <TextField 
                                         fullWidth 
-                                        label="Contraseña" 
+                                        label={editingId ? "Nueva Contraseña (Opcional)" : "Contraseña"}
                                         type="password" 
                                         size="small"
                                         value={form.password} 
                                         onChange={e => setForm({...form, password: e.target.value})} 
-                                        required
+                                        required={!editingId}
                                         InputProps={{
                                             startAdornment: (
                                                 <InputAdornment position="start">
@@ -165,14 +213,25 @@ const AdminUsers = () => {
                                         size="large"
                                         sx={{ 
                                             mt: 2, 
-                                            bgcolor: themeColors.primary, 
+                                            bgcolor: editingId ? '#ea580c' : themeColors.primary, 
                                             fontWeight: 'bold', 
-                                            '&:hover': { bgcolor: '#1b5e20' },
+                                            '&:hover': { bgcolor: editingId ? '#c2410c' : '#1b5e20' },
                                             borderRadius: 2
                                         }}
                                     >
-                                        Registrar Usuario
+                                        {editingId ? 'Actualizar Usuario' : 'Registrar Usuario'}
                                     </Button>
+                                    
+                                    {editingId && (
+                                        <Button 
+                                            fullWidth 
+                                            variant="outlined" 
+                                            onClick={resetForm}
+                                            sx={{ mt: 1, color: '#64748b', borderColor: '#cbd5e1' }}
+                                        >
+                                            Cancelar Edición
+                                        </Button>
+                                    )}
                                 </Stack>
                             </form>
                         </CardContent>
@@ -197,6 +256,7 @@ const AdminUsers = () => {
                                     <TableCell sx={{ fontWeight: 'bold', color: themeColors.secondary }}>RUT</TableCell>
                                     <TableCell sx={{ fontWeight: 'bold', color: themeColors.secondary }}>ROL</TableCell>
                                     <TableCell sx={{ fontWeight: 'bold', color: themeColors.secondary }}>FECHA INGRESO</TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 'bold', color: themeColors.secondary }}>ACCIONES</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -241,11 +301,23 @@ const AdminUsers = () => {
                                         <TableCell sx={{ color: 'text.secondary' }}>
                                             {new Date(u.createdAt).toLocaleDateString()}
                                         </TableCell>
+                                        <TableCell align="right">
+                                            <Box display="flex" justifyContent="flex-end" gap={1}>
+                                                <ActionButton 
+                                                    type="edit" 
+                                                    onClick={() => handleEdit(u)} 
+                                                />
+                                                <ActionButton 
+                                                    type="delete" 
+                                                    onClick={() => handleDelete(u.id)} 
+                                                />
+                                            </Box>
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                                 {users.length === 0 && (
                                     <TableRow>
-                                        <TableCell colSpan={4} align="center" sx={{ py: 4, color: 'text.secondary' }}>
+                                        <TableCell colSpan={5} align="center" sx={{ py: 4, color: 'text.secondary' }}>
                                             No hay usuarios registrados.
                                         </TableCell>
                                     </TableRow>

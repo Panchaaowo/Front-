@@ -20,9 +20,7 @@ const Dashboard = () => {
     const isAdmin = user && user.rol === 'admin';
     const brandColor = '#2e7d32'; 
 
-    const [topProducts, setTopProducts] = useState([]);
-    const [loadingTop, setLoadingTop] = useState(true);
-    
+
     const [stats, setStats] = useState({
         totalPedidos: 145,
         stockBajoCount: 0,
@@ -32,56 +30,25 @@ const Dashboard = () => {
     
     const formatCurrency = (value) => `$${Number(value).toLocaleString('es-CL')}`;
 
-    const cargarTopProductos = async () => {
-        setLoadingTop(true);
+    const cargarAlertasStock = async () => {
         try {
             const res = await productsService.getAll(); 
-            
             let fetchedProducts = res.data || res;
             
             if (fetchedProducts && fetchedProducts.length > 0) {
-                 
-                 const rankedByStock = fetchedProducts
-                     .map(p => ({ 
-                         nombre: p.nombre, 
-                         stock: p.stock 
-                     }))
-                     .sort((a, b) => b.stock - a.stock)
-                     .slice(0, 6); 
-
-                 if (rankedByStock.length === 0) {
-                      setTopProducts([]);
-                 } else {
-                      const maxStock = rankedByStock[0].stock || 1;
-                      
-                      const mappedProducts = rankedByStock.map(prod => ({
-                          name: prod.nombre,
-                          sales: prod.stock, 
-                          val: Math.round((prod.stock / maxStock) * 100), 
-                      }));
-                     
-                     setTopProducts(mappedProducts);
-                 }
-
                  const lowStockCount = fetchedProducts.filter(p => p.stock < 10).length;
                  setStats(prev => ({ ...prev, stockBajoCount: lowStockCount }));
-
             } else {
-                 setTopProducts([]);
                  setStats(prev => ({ ...prev, stockBajoCount: 0 }));
             }
         } catch (error) {
             console.error("Error cargando productos:", error);
-            Swal.fire('Error de Conexión', 'No se pudo cargar la lista de productos.', 'error');
-            setTopProducts([]);
-        } finally {
-            setLoadingTop(false);
         }
     };
 
     useEffect(() => {
         if (isAdmin) {
-            cargarTopProductos();
+            cargarAlertasStock();
         }
     }, [isAdmin]);
 
@@ -264,56 +231,7 @@ const Dashboard = () => {
                     </Grid>
                 </Box>
 
-                <Box>
-                    <Typography variant="h6" fontWeight="800" color="#1e293b" mb={3}>Productos Destacados</Typography>
-                    <Paper elevation={0} sx={{ p: 4, borderRadius: 4, bgcolor: 'white', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
-                        <Box display="flex" alignItems="center" gap={2} mb={4}>
-                            <Box sx={{ p: 1, borderRadius: 2, bgcolor: '#f1f5f9', color: '#64748b' }}>
-                                <TrendingUpIcon />
-                            </Box>
-                            <Box>
-                                <Typography variant="subtitle1" fontWeight="700" color="#1e293b">Top Stock</Typography>
-                                <Typography variant="body2" color="#94a3b8">Productos con mayor disponibilidad</Typography>
-                            </Box>
-                        </Box>
 
-                        {loadingTop ? (
-                            <Box sx={{ display: 'flex', justifyContent: 'center', py: 5 }}>
-                                <CircularProgress sx={{ color: brandColor }} />
-                            </Box>
-                        ) : topProducts.length === 0 ? (
-                            <Typography color="text.secondary" sx={{ py: 3, textAlign: 'center' }}>
-                                No hay productos disponibles para mostrar el Top 6.
-                            </Typography>
-                        ) : (
-                            <Grid container spacing={4}>
-                                {topProducts.map((prod, i) => (
-                                    <Grid size={{ xs: 12, md: 6 }} key={prod.name}>
-                                        <Box mb={1}>
-                                            <Box display="flex" justifyContent="space-between" mb={1}>
-                                                <Typography fontWeight="600" color="#334155">{prod.name}</Typography>
-                                                <Typography variant="caption" fontWeight="700" color="#64748b">{prod.sales} un.</Typography>
-                                            </Box>
-                                            <LinearProgress 
-                                                variant="determinate" 
-                                                value={prod.val} 
-                                                sx={{ 
-                                                    height: 10, 
-                                                    borderRadius: 5, 
-                                                    bgcolor: '#f1f5f9', 
-                                                    '& .MuiLinearProgress-bar': { 
-                                                        bgcolor: i < 3 ? brandColor : '#cbd5e1', 
-                                                        borderRadius: 5 
-                                                    } 
-                                                }} 
-                                            />
-                                        </Box>
-                                    </Grid>
-                                ))}
-                            </Grid>
-                        )}
-                    </Paper>
-                </Box>
             </Container>
         </AdminLayout>
     );

@@ -809,7 +809,7 @@ const Home = () => {
                 cantidadVentas: backendTransactions.length,
                 totalEfectivo: backendTransactions.filter(t => t.medioPago === 'EFECTIVO').reduce((acc, t) => acc + Number(t.total || 0), 0),
                 
-                totalCredito: backendTransactions.filter(t => t.medioPago !== 'EFECTIVO').reduce((acc, t) => acc + Number(t.total || 0), 0),
+                totalCredito: backendTransactions.filter(t => t.medioPago === 'CREDITO' || t.medioPago === 'CRÉDITO').reduce((acc, t) => acc + Number(t.total || 0), 0),
                
                 totalDebito: backendTransactions.filter(t => t.medioPago === 'DEBITO' || t.medioPago === 'DÉBITO').reduce((acc, t) => acc + Number(t.total || 0), 0),
             };
